@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { InfoIcon, CloseIcon } from "@chakra-ui/icons";
 import { FiX } from "react-icons/fi";
 import {
@@ -7,11 +7,21 @@ import {
   Icon,
   Stack,
   Text,
-  Button,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { BannerLink } from "./BannerLink";
 const Banner = (props) => {
   const { email, handleCloseIcon, handleResendEmailClick } = props;
+  const [buttonText, setButtonText] = useState("Resend email");
+
+  const handleResendEmailLink = () => {
+    setButtonText("Resending...");
+    handleResendEmailClick();
+    setTimeout(() => {
+      setButtonText("Email Sent!");
+    }, [3000]);
+  };
+
   return (
     <Box as="section">
       <Stack
@@ -30,19 +40,17 @@ const Banner = (props) => {
             <b>{email}</b>
           </Text>
         </HStack>
-        <HStack spacing="4">
-          <Button
-            isFullWidth
-            color="white"
-            size="sm"
-            fontWeight="normal"
-            color="blue.500"
-            fontSize="xs"
-            onClick={handleResendEmailClick}
-          >
-            Resend email
-          </Button>
-        </HStack>
+        <BannerLink
+          w={{
+            base: "full",
+            sm: "auto",
+          }}
+          fontWeight={buttonText === "Email Sent!" ? "bold" : "normal"}
+          flexShrink={0}
+          onClick={handleResendEmailLink}
+        >
+          {buttonText}
+        </BannerLink>
         <FiX size={22} onClick={handleCloseIcon} />
       </Stack>
     </Box>

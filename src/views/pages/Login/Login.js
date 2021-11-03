@@ -53,6 +53,11 @@ const Login = (props) => {
   const handleGoogleClick = () => {};
 
   const handleFaceBookClick = () => {};
+
+  const handleCloseIcon = () => {};
+
+  const handleResendEmailClick = () => {};
+
   return (
     <>
       <Box
@@ -170,7 +175,14 @@ const Login = (props) => {
           </Card>
         </Box>
       </Box>
-      {showBanner && <Banner email={email} />}
+      {showBanner && (
+        <Banner
+          email={email}
+          handleCloseIcon={handleCloseIcon}
+          handleResendEmailClick={handleResendEmailClick}
+          {...props}
+        />
+      )}
     </>
   );
 };

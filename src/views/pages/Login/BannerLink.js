@@ -1,19 +1,20 @@
+import React from "react";
 import { chakra } from "@chakra-ui/react";
-import * as React from "react";
 
 export const BannerLink = (props) => (
   <chakra.a
     {...props}
-    href="#"
     px="4"
     py="1.5"
     textAlign="center"
+    backgroundColor="white"
+    textColor="blue.500"
     borderWidth="1px"
     borderColor="whiteAlpha.400"
-    fontWeight="medium"
     rounded="base"
+    cursor="pointer"
     _hover={{
-      bg: "whiteAlpha.200",
+      bg: "whiteAlpha.800",
     }}
   />
 );
