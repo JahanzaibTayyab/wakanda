@@ -4,6 +4,7 @@ import {
   Flex,
   Heading,
   Stack,
+  Divider,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import { FaReact } from "react-icons/fa";
@@ -86,6 +87,13 @@ const SideBar = (props) => {
               </SidebarLink>
             </Stack>
           </ScrollArea>
+        </Box>
+        <Box position="fixed" bottom="10px" lineHeight="tall" width="15%">
+          <Divider mb="5" />
+          <Stack pb="6">
+            <SidebarLink icon={<FaReact />}>Support</SidebarLink>
+            <SidebarLink icon={<FaReact />}>Logout</SidebarLink>
+          </Stack>
         </Box>
       </Box>
       <Box
