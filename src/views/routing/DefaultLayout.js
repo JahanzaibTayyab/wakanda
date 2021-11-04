@@ -8,15 +8,14 @@ const DefaultLayout = (props) => {
   const { match } = props;
   return (
     <>
-      {routerService &&
-        routerService.map((route, key) => (
-          <Route
-            exact
-            key={key}
-            path={`${match.url}/${route.path}`}
-            component={route.component}
-          />
-        ))}
+      {routerService?.map((route, key) => (
+        <Route
+          exact
+          key={key}
+          path={`${match.url}/${route.path}`}
+          component={route.component}
+        />
+      ))}
     </>
   );
 };

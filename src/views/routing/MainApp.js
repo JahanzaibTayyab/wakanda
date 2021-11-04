@@ -10,7 +10,7 @@ const InitialPath = ({ component: Component, ...rest }) => (
 
 const MainApp = (props) => {
   const { location, match, user } = props;
-  if (localStorage.getItem("token") == null) {
+  if (localStorage.getItem("token") !== null) {
     if (location.pathname !== "/login") {
       return <Redirect to={"/login"} />;
     }
