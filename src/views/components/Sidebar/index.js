@@ -16,6 +16,7 @@ import { ScrollArea } from "./ScrollArea";
 import { SidebarLink } from "./SidebarLink";
 import { useMobileMenuState } from "./useMobileMenuState";
 import { UserInfo } from "./UserInfo";
+import DashboardContent from "../dashborad";
 
 const SideBar = (props) => {
   const { isOpen, toggle } = useMobileMenuState();
@@ -131,15 +132,7 @@ const SideBar = (props) => {
               </Flex>
             </Flex>
             <Flex direction="column" flex="1" overflow="auto" px="10" pt="8">
-              <Heading size="md" fontWeight="extrabold" mb="6">
-                Product Vision
-              </Heading>
-              <Box
-                flex="1"
-                borderWidth="3px"
-                borderStyle="dashed"
-                rounded="xl"
-              />
+              <DashboardContent title="Espresso" refreshIcon={<FaReact />} />
             </Flex>
           </Flex>
         </Box>
