@@ -54,7 +54,9 @@ const Login = (props) => {
 
   const handleFaceBookClick = () => {};
 
-  const handleCloseIcon = () => {};
+  const handleCloseIcon = () => {
+    setShowBanner(false);
+  };
 
   const handleResendEmailClick = () => {};
 
