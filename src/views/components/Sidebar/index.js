@@ -2,7 +2,6 @@ import React from "react";
 import {
   Box,
   Flex,
-  Heading,
   Stack,
   Divider,
   useColorModeValue as mode,
@@ -16,6 +15,7 @@ import { ScrollArea } from "./ScrollArea";
 import { SidebarLink } from "./SidebarLink";
 import { useMobileMenuState } from "./useMobileMenuState";
 import { UserInfo } from "./UserInfo";
+import DashboardContent from "../dashborad";
 
 const SideBar = (props) => {
   const { isOpen, toggle } = useMobileMenuState();
@@ -88,8 +88,8 @@ const SideBar = (props) => {
             </Stack>
           </ScrollArea>
         </Box>
-        <Box position="fixed" bottom="10px" lineHeight="tall" width="15%">
-          <Divider mb="5" />
+        <Box position="fixed" bottom="10px" lineHeight="tall" width="19%">
+          <Divider mb="5" ml={-5} />
           <Stack pb="6">
             <SidebarLink icon={<FaReact />}>Support</SidebarLink>
             <SidebarLink icon={<FaReact />}>Logout</SidebarLink>
@@ -131,15 +131,7 @@ const SideBar = (props) => {
               </Flex>
             </Flex>
             <Flex direction="column" flex="1" overflow="auto" px="10" pt="8">
-              <Heading size="md" fontWeight="extrabold" mb="6">
-                Product Vision
-              </Heading>
-              <Box
-                flex="1"
-                borderWidth="3px"
-                borderStyle="dashed"
-                rounded="xl"
-              />
+              <DashboardContent title="Espresso" refreshIcon={<FaReact />} />
             </Flex>
           </Flex>
         </Box>
