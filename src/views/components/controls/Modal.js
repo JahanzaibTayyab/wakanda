@@ -6,7 +6,6 @@ import {
   ModalHeader,
   ModalFooter,
   ModalBody,
-  Heading,
 } from "@chakra-ui/react";
 
 const CommonModal = (props) => {
@@ -16,7 +15,7 @@ const CommonModal = (props) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader color="gray.700">{title}</ModalHeader>
-        <ModalBody>{children}</ModalBody>
+        <ModalBody fontSize="sm">{children}</ModalBody>
         <ModalFooter>{actions}</ModalFooter>
       </ModalContent>
     </Modal>

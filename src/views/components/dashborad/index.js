@@ -8,60 +8,116 @@ import {
   Divider,
   Button,
   Switch,
-  FormLabel,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Icon,
+  useToast,
 } from "@chakra-ui/react";
-import { GrCircleInformation } from "react-icons/gr";
+import { ChevronDownIcon, InfoOutlineIcon } from "@chakra-ui/icons";
+import { FaReact } from "react-icons/fa";
 import RefreshLink from "./RefreshLink";
-import Modal from "../controls/Modal";
 import "./dashboard.css";
+import RefreshLinkModal from "./Modals/RefreshLinkModal";
+import ChangeDatabaseModal from "./Modals/ChangeDatabaseModal";
+import ChangePageModal from "./Modals/ChangePageModal";
+import EmbedInNotionModal from "./Modals/EmbedInNotionModal";
+import { ModalToast } from "../../../constants/_data/Mockup";
+
 const DashboardContent = (props) => {
   const { title } = props;
+  const toast = useToast();
 
   const [enableSwitch, setEnabledSwitch] = useState(false);
   const [disabledRefreshLinkButton, setDisabledRefreshLinkButton] =
     useState(false);
-  const [showRefreshModal, setShowRefreshModal] = useState(false);
-  const [refreshModalButtonText, setRefreshModalButtonText] =
-    useState("Refresh");
-  const [disabledRefreshModalButton, setDisabledRefreshModalButton] =
-    useState(false);
+  const [showRefreshLinkModal, setShowRefreshLinkModal] = useState(false);
   const [showChangePageModal, setShowChangePageModal] = useState(false);
-  const [changePagehModalButtonText, setChangePageModalButtonText] =
-    useState("Change Page");
-  const [disabledChangePageModalButton, setDisabledChangePageModalButton] =
-    useState(false);
-  const [showEmbedNotionModal, setShowEmbedNotionModal] = useState(false);
-  const [embedNotionModalButtonText, setEmbedNotionModalButtonText] =
-    useState("Embed");
-  const [disabledEmbedNotionModalButton, setDisabledEmbedNotionModalButton] =
-    useState(false);
+  const [showEmbedInNotionModal, setShowEmbedInNotionModal] = useState(false);
   const [showChangeDatabaseModal, setShowChangeDatabaseModal] = useState(false);
-  const [changeDatabaseModalButtonText, setChangeDatabaseModalButtonText] =
-    useState("Change Database");
-  const [
-    disabledChangeDatabaseModalButton,
-    setDisabledChangeDatabaseModalButton,
-  ] = useState(false);
-
+  const [disabledEmbedWidgetButton, setDisabledEmbedWidgetButton] =
+    useState(false);
   const handleRefreshLinkClick = () => {
-    setShowRefreshModal(true);
     setDisabledRefreshLinkButton(true);
-  };
-
-  const handleRefreshModalClick = () => {
-    setRefreshModalButtonText("Refreshing...");
-    setDisabledRefreshModalButton(true);
-  };
-
-  const handleRefreshCancelModalClick = () => {
-    setRefreshModalButtonText("Refresh");
-    setShowRefreshModal(false);
-    setDisabledRefreshLinkButton(false);
-    setDisabledRefreshModalButton(false);
+    setShowRefreshLinkModal(true);
   };
 
   const handelSwitchClick = (e) => {
-    console.log(e.traget.value);
+    setEnabledSwitch(!enableSwitch);
+  };
+
+  const handleEmbedWidgetClick = () => {
+    setShowEmbedInNotionModal(true);
+    setDisabledEmbedWidgetButton(true);
+  };
+
+  const handelOkClickRefreshLinkModal = () => {
+    toast({
+      position: "bottom-right",
+      title: ModalToast.RefreshLink.success.title,
+      description: ModalToast.RefreshLink.success.description,
+      duration: ModalToast.RefreshLink.success.duration,
+      status: "success",
+      isClosable: true,
+    });
+    setDisabledRefreshLinkButton(false);
+    setShowRefreshLinkModal(false);
+  };
+
+  const handelCancelClickRefreshLinkModal = () => {
+    setDisabledRefreshLinkButton(false);
+    setShowRefreshLinkModal(false);
+  };
+
+  const handelOkClickChangeDatabaseModal = () => {
+    toast({
+      position: "bottom-right",
+      title: ModalToast.ChangeDatabase.success.title,
+      description: ModalToast.ChangeDatabase.success.description,
+      duration: ModalToast.ChangeDatabase.success.duration,
+      status: "success",
+      isClosable: true,
+    });
+    setShowChangeDatabaseModal(false);
+  };
+
+  const handelCancelClickChangeDatabaseModal = () => {
+    setShowChangeDatabaseModal(false);
+  };
+
+  const handelOkClickChangePageModal = () => {
+    toast({
+      position: "bottom-right",
+      title: ModalToast.ChangePage.success.title,
+      description: ModalToast.ChangePage.success.description,
+      duration: ModalToast.ChangePage.success.duration,
+      status: "success",
+      isClosable: true,
+    });
+    setShowChangePageModal(false);
+  };
+
+  const handelCancelClickChangePageModal = () => {
+    setShowChangePageModal(false);
+  };
+
+  const handelOkClickEmbedInNotionModal = () => {
+    toast({
+      position: "bottom-right",
+      title: ModalToast.EmbedInNotion.success.title,
+      description: ModalToast.EmbedInNotion.success.description,
+      duration: ModalToast.EmbedInNotion.success.duration,
+      status: "success",
+      isClosable: true,
+    });
+    setDisabledEmbedWidgetButton(false);
+    setShowEmbedInNotionModal(false);
+  };
+
+  const handelCancelClickEmbedInNotionModal = () => {
+    setDisabledEmbedWidgetButton(false);
+    setShowEmbedInNotionModal(false);
   };
 
   return (
@@ -89,7 +145,7 @@ const DashboardContent = (props) => {
                   md: "none",
                 }}
               >
-                <GrCircleInformation color="gray.500" />
+                <InfoOutlineIcon color="gray.500" />
               </Box>
             </Flex>
             <Text
@@ -117,7 +173,7 @@ const DashboardContent = (props) => {
             />
             <Flex justify="flex-end">
               <Button
-                bg="yellow.500"
+                bg="yellow.600"
                 textColor="white"
                 isDisabled={disabledRefreshLinkButton}
                 fontSize="xs"
@@ -137,7 +193,10 @@ const DashboardContent = (props) => {
                 onChange={handelSwitchClick}
               />
               <Text ml={5} fontSize="xs" textAlign="center">
-                Secret public link <a className="textYellow">enabled</a>
+                Secret public link{" "}
+                <a className="textYellow">
+                  {enableSwitch ? "enabled" : "disabled"}
+                </a>
               </Text>
             </Flex>
           </Box>
@@ -170,7 +229,7 @@ const DashboardContent = (props) => {
                   md: "none",
                 }}
               >
-                <GrCircleInformation color="gray.500" />
+                <InfoOutlineIcon color="gray.500" />
               </Box>
             </Flex>
             <Text
@@ -190,35 +249,43 @@ const DashboardContent = (props) => {
             </Text>
           </Box>
           <Box>
-            <RefreshLink
-              icon={props.refreshIcon}
-              disabled
-              inputValue="https://app.notion.coffee/w/espresso/asdadsadsasasd"
-            />
+            <Flex justify="flex-end">
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rightIcon={<ChevronDownIcon />}
+                  leftIcon={<Icon as={FaReact} color="orange.500" />}
+                  size="sm"
+                  fontSize="sm"
+                  fontWeight={500}
+                  width="45%"
+                  textAlign="left"
+                  bg="white"
+                  borderWidth="1px"
+                >
+                  Widget’s Page
+                </MenuButton>
+                <MenuList>
+                  <MenuItem>Loream Text 1</MenuItem>
+                  <MenuItem>Loream Text 2</MenuItem>
+                  <MenuItem>Loream Text 3</MenuItem>
+                  <MenuItem>Loream Text 4</MenuItem>
+                  <MenuItem>Loream Text 5</MenuItem>
+                </MenuList>
+              </Menu>
+            </Flex>
             <Flex justify="flex-end">
               <Button
-                bg="yellow.500"
+                bg="yellow.600"
                 textColor="white"
-                isDisabled={disabledRefreshLinkButton}
+                isDisabled={disabledEmbedWidgetButton}
                 fontSize="xs"
                 mt={4}
                 leftIcon={props.refreshIcon}
-                onClick={handleRefreshLinkClick}
+                onClick={handleEmbedWidgetClick}
               >
-                Refresh Link
+                Embed Widget
               </Button>
-            </Flex>
-            <Flex alignItems="center" justifyContent="flex-end" mt={5}>
-              <Switch
-                id="email-alerts"
-                size="sm"
-                colorScheme="yellow"
-                value={enableSwitch}
-                onChange={handelSwitchClick}
-              />
-              <Text ml={5} fontSize="xs" textAlign="center">
-                Secret public link <a className="textYellow">enabled</a>
-              </Text>
             </Flex>
           </Box>
         </SimpleGrid>
@@ -250,7 +317,7 @@ const DashboardContent = (props) => {
                   md: "none",
                 }}
               >
-                <GrCircleInformation color="gray.500" />
+                <InfoOutlineIcon color="gray.500" />
               </Box>
             </Flex>
             <Text
@@ -266,70 +333,68 @@ const DashboardContent = (props) => {
             >
               This is the database where the task data will be saved. Please, be
               aware that this database must contain at least the same properties
-              as the Notion Coffee template task database.
+              as the{" "}
+              <a className="textUnderline">
+                Notion Coffee template task database.
+              </a>
             </Text>
           </Box>
           <Box>
-            <RefreshLink
-              icon={props.refreshIcon}
-              disabled
-              inputValue="https://app.notion.coffee/w/espresso/asdadsadsasasd"
-            />
             <Flex justify="flex-end">
-              <Button
-                bg="yellow.500"
-                textColor="white"
-                isDisabled={disabledRefreshLinkButton}
-                fontSize="xs"
-                mt={4}
-                leftIcon={props.refreshIcon}
-                onClick={handleRefreshLinkClick}
-              >
-                Refresh Link
-              </Button>
-            </Flex>
-            <Flex alignItems="center" justifyContent="flex-end" mt={5}>
-              <Switch
-                id="email-alerts"
-                size="sm"
-                colorScheme="yellow"
-                value={enableSwitch}
-                onChange={handelSwitchClick}
-              />
-              <Text ml={5} fontSize="xs" textAlign="center">
-                Secret public link <a className="textYellow">enabled</a>
-              </Text>
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rightIcon={<ChevronDownIcon />}
+                  leftIcon={<InfoOutlineIcon color="gray.500" />}
+                  size="sm"
+                  fontSize="sm"
+                  fontWeight={500}
+                  width="45%"
+                  textAlign="left"
+                  bg="white"
+                  borderWidth="1px"
+                >
+                  Task Database
+                </MenuButton>
+                <MenuList>
+                  <MenuItem>Loream Text 1</MenuItem>
+                  <MenuItem>Loream Text 2</MenuItem>
+                  <MenuItem>Loream Text 3</MenuItem>
+                  <MenuItem>Loream Text 4</MenuItem>
+                  <MenuItem>Loream Text 5</MenuItem>
+                </MenuList>
+              </Menu>
             </Flex>
           </Box>
         </SimpleGrid>
       </Box>
-      {showRefreshModal && (
-        <Modal
-          isOpen={showRefreshModal}
-          title={"Refresh link"}
-          actions={
-            <>
-              <Button
-                fontSize="sm"
-                mr={3}
-                onClick={handleRefreshCancelModalClick}
-              >
-                Cancel
-              </Button>
-              <Button
-                bg="yellow.600"
-                textColor="white"
-                isDisabled={disabledRefreshModalButton}
-                fontSize="sm"
-                onClick={handleRefreshModalClick}
-              >
-                {refreshModalButtonText}
-              </Button>
-            </>
-          }
-        >
-          Are you sure? Your embeds will become unusable.
-        </Modal>
+      {showRefreshLinkModal && (
+        <RefreshLinkModal
+          open={showRefreshLinkModal}
+          onClose={handelCancelClickRefreshLinkModal}
+          onOk={handelOkClickRefreshLinkModal}
+        />
+      )}
+      {showChangeDatabaseModal && (
+        <ChangeDatabaseModal
+          open={showChangeDatabaseModal}
+          onClose={handelCancelClickChangeDatabaseModal}
+          onOk={handelOkClickChangeDatabaseModal}
+        />
+      )}
+      {showChangePageModal && (
+        <ChangePageModal
+          open={showChangePageModal}
+          onClose={handelCancelClickChangePageModal}
+          onOk={handelOkClickChangePageModal}
+        />
+      )}
+      {showEmbedInNotionModal && (
+        <EmbedInNotionModal
+          open={showEmbedInNotionModal}
+          onClose={handelCancelClickEmbedInNotionModal}
+          onOk={handelOkClickEmbedInNotionModal}
+        />
       )}
     </>
   );

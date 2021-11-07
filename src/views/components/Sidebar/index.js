@@ -2,7 +2,6 @@ import React from "react";
 import {
   Box,
   Flex,
-  Heading,
   Stack,
   Divider,
   useColorModeValue as mode,
@@ -89,8 +88,8 @@ const SideBar = (props) => {
             </Stack>
           </ScrollArea>
         </Box>
-        <Box position="fixed" bottom="10px" lineHeight="tall" width="15%">
-          <Divider mb="5" />
+        <Box position="fixed" bottom="10px" lineHeight="tall" width="19%">
+          <Divider mb="5" ml={-5} />
           <Stack pb="6">
             <SidebarLink icon={<FaReact />}>Support</SidebarLink>
             <SidebarLink icon={<FaReact />}>Logout</SidebarLink>
