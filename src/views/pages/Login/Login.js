@@ -4,7 +4,7 @@ import {
   Button,
   Heading,
   SimpleGrid,
-  chakra,
+  FormErrorMessage,
   Text,
   FormControl,
   FormLabel,
@@ -14,51 +14,111 @@ import {
   useColorModeValue,
   Flex,
   Divider,
+  InputRightAddon,
   VisuallyHidden,
-  InputRightElement,
 } from "@chakra-ui/react";
 import { FaGoogle } from "react-icons/fa";
+import { useToast } from "@chakra-ui/react";
 import { AiFillFacebook } from "react-icons/ai";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Logo } from "../../components/controls/Logo";
 import Link from "../../components/controls/Link";
 import Card from "../../components/controls/Card";
-import Banner from "./Banner";
+import { Toast } from "../../../constants/Toast";
+
+const schema = yup.object().shape({
+  email: yup.string().email().required(),
+  password: yup
+    .string()
+    .min(8)
+    .required()
+    .matches(
+      /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
+      "Password must contain at least 8 characters, one uppercase, one number and one special case character"
+    ),
+});
 
 const Login = (props) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const toast = useToast();
   const [show, setShow] = useState(false);
-  const [showBanner, setShowBanner] = useState(false);
+  const [toastType, setToastType] = useState("Custom Login");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    mode: "onBlur",
+    resolver: yupResolver(schema),
+  });
 
   const handleClick = () => setShow(!show);
 
-  const handleSingUpLink = () => {};
-
-  const handleChange = (e) => {
-    e.preventDefault();
-    const key = e.target.name;
-    if (key === "email") {
-      setEmail(e.target.value);
-      setEmailError("");
-    }
-    if (key === "password") {
-      setPassword(e.target.value);
-      setPasswordError("");
+  const handleSignInClick = () => {
+    if (toastType === "Custom Login") {
+      toast({
+        position: "bottom-right",
+        title: Toast.EmailVerification.error.title,
+        description: Toast.EmailVerification.error.description,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      toast({
+        position: "bottom-right",
+        title: Toast.EmailVerification.success.title,
+        description: Toast.EmailVerification.success.description,
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
+      toast({
+        position: "bottom-right",
+        title: Toast.EmailVerification.info.title,
+        duration: 5000,
+        isClosable: true,
+      });
+    } else if (toastType === "Social Login") {
+      toast({
+        position: "bottom-right",
+        title: Toast.SocialLoginVerification.error.title,
+        description: Toast.SocialLoginVerification.error.description,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      toast({
+        position: "bottom-right",
+        title: Toast.SocialLoginVerification.success.title,
+        description: Toast.SocialLoginVerification.success.description,
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
+      toast({
+        position: "bottom-right",
+        title: Toast.SocialLoginVerification.info.title,
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
-  const handleSignInClick = () => {};
 
-  const handleGoogleClick = () => {};
-
-  const handleFaceBookClick = () => {};
-
-  const handleCloseIcon = () => {
-    setShowBanner(false);
+  const handleGoogleClick = () => {
+    setToastType("Social Login");
   };
 
-  const handleResendEmailClick = () => {};
+  const handleFaceBookClick = () => {
+    setToastType("Social Login");
+  };
+
+  const onSubmit = (values) => {
+    console.log(values);
+    reset();
+  };
 
   return (
     <>
@@ -85,60 +145,54 @@ const Login = (props) => {
           </Heading>
           <Text mt="4" mb="8" align="center" maxW="md" fontWeight="small">
             <Text as="span">Don&apos;t have an account?</Text>
-            <Link href="#" fontWeight="bold" onClick={handleSingUpLink}>
+            <Link href="/signup" fontWeight="bold">
               Sign up here
             </Link>
           </Text>
           <Card>
-            <chakra.form
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
-            >
-              <Stack spacing="6">
-                <FormControl id="email">
-                  <FormLabel>Email address</FormLabel>
+            <Stack spacing="6">
+              <FormControl
+                isInvalid={!!errors?.email?.message}
+                errortext={errors?.email?.message}
+                isRequired
+              >
+                <FormLabel>Email</FormLabel>
+                <Input type="email" name="email" {...register("email")} />
+                <FormErrorMessage>{errors?.email?.message}</FormErrorMessage>
+              </FormControl>
+              <FormControl
+                isInvalid={!!errors?.password?.message}
+                errortext={errors?.password?.message}
+                isRequired
+              >
+                <Flex justify="space-between">
+                  <FormLabel>Password</FormLabel>
+                  <Link fontWeight="bold">Forgot Password?</Link>
+                </Flex>
+                <InputGroup size="md">
                   <Input
-                    name="email"
-                    value={email}
-                    type="email"
-                    autoComplete="email"
-                    onChange={handleChange}
-                    required
+                    {...register("password")}
+                    type={show ? "text" : "password"}
+                    name="password"
+                    pr="4.5rem"
                   />
-                </FormControl>
-                <FormControl id="password">
-                  <Flex justify="space-between">
-                    <FormLabel>Password</FormLabel>
-                    <Link fontWeight="bold">Forgot Password?</Link>
-                  </Flex>
-                  <InputGroup size="md">
-                    <Input
-                      pr="4.5rem"
-                      name="password"
-                      value={password}
-                      type={show ? "text" : "password"}
-                      required
-                      onChange={handleChange}
-                    />
-                    <InputRightElement width="4.5rem">
-                      <Button size="sm" onClick={handleClick}>
-                        {show ? "Hide" : "Show"}
-                      </Button>
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
-                <Button
-                  type="submit"
-                  colorScheme="teal"
-                  size="lg"
-                  fontSize="md"
-                  onClick={handleSignInClick}
-                >
-                  Sign in
-                </Button>
-              </Stack>
-            </chakra.form>
+                  <InputRightAddon onClick={handleClick}>
+                    {show ? "Hide" : "Show"}
+                  </InputRightAddon>
+                </InputGroup>
+                <FormErrorMessage>{errors?.password?.message}</FormErrorMessage>
+              </FormControl>
+              <Button
+                type="submit"
+                colorScheme="teal"
+                size="lg"
+                fontSize="md"
+                onClick={handleSubmit(onSubmit)}
+                disabled={!!errors.email || !!errors.password}
+              >
+                Sign in
+              </Button>
+            </Stack>
             <Flex align="center" color="gray.300" mt="6">
               <Box flex="1">
                 <Divider borderColor="currentcolor" />
@@ -177,14 +231,6 @@ const Login = (props) => {
           </Card>
         </Box>
       </Box>
-      {showBanner && (
-        <Banner
-          email={email}
-          handleCloseIcon={handleCloseIcon}
-          handleResendEmailClick={handleResendEmailClick}
-          {...props}
-        />
-      )}
     </>
   );
 };
