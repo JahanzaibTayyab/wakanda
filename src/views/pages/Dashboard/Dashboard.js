@@ -1,11 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
-import Sidebar from "../../components/Sidebar";
-
+import DashboardContent from "../../components/dashboard";
+import { FaReact } from "react-icons/fa";
 export const Dashboard = (props) => {
   return (
     <>
-      <Sidebar {...props} />
+      <DashboardContent {...props} refreshIcon={<FaReact />} />
     </>
   );
 };
