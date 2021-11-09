@@ -15,11 +15,16 @@ import { ScrollArea } from "./ScrollArea";
 import { SidebarLink } from "./SidebarLink";
 import { useMobileMenuState } from "./useMobileMenuState";
 import { UserInfo } from "./UserInfo";
-import DashboardContent from "../dashborad";
+import DashboardContent from "../dashboard";
+import Profile from "../../pages/Profile";
+import { useHistory } from "react-router-dom";
 
 const SideBar = (props) => {
+  const { children } = props;
   const { isOpen, toggle } = useMobileMenuState();
   const { match } = props;
+  const history = useHistory();
+  const path = history.location.pathname;
   return (
     <Flex
       height="100vh"
@@ -43,7 +48,6 @@ const SideBar = (props) => {
         <Box fontSize="sm" lineHeight="tall">
           <Box
             as="a"
-            href="#"
             p="3"
             display="block"
             transition="background 0.1s"
@@ -54,11 +58,13 @@ const SideBar = (props) => {
             whiteSpace="nowrap"
           >
             <Logo />
-            <UserInfo
-              name="Segun Adebayo"
-              email="segun@chakra-ui.com"
-              image="https://bit.ly/sage-adebayo"
-            />
+            <Box as="a" href={match.url + "/profile"} cursor="pointer">
+              <UserInfo
+                name="Segun Adebayo"
+                email="segun@chakra-ui.com"
+                image="https://bit.ly/sage-adebayo"
+              />
+            </Box>
           </Box>
           <ScrollArea pt="5" pb="6">
             <Stack pb="6">
@@ -88,8 +94,9 @@ const SideBar = (props) => {
             </Stack>
           </ScrollArea>
         </Box>
-        <Box position="fixed" bottom="10px" lineHeight="tall" width="19%">
-          <Divider mb="5" ml={-5} />
+
+        <Box position="fixed" bottom="10px" lineHeight="tall" width="inherit">
+          <Divider mb={5} ml={-5} />
           <Stack pb="6">
             <SidebarLink icon={<FaReact />}>Support</SidebarLink>
             <SidebarLink icon={<FaReact />}>Logout</SidebarLink>
@@ -131,7 +138,7 @@ const SideBar = (props) => {
               </Flex>
             </Flex>
             <Flex direction="column" flex="1" overflow="auto" px="10" pt="8">
-              <DashboardContent title="Espresso" refreshIcon={<FaReact />} />
+              {children}
             </Flex>
           </Flex>
         </Box>
