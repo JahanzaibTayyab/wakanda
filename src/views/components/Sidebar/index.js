@@ -21,7 +21,6 @@ const SideBar = (props) => {
   const { children } = props;
   const { isOpen, toggle } = useMobileMenuState();
   const { match } = props;
-  console.log("🚀 ~ file: index.js ~ line 24 ~ SideBar ~ match", match);
   const history = useHistory();
   const path = history.location.pathname;
   return (
