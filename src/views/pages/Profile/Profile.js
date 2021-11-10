@@ -46,7 +46,7 @@ const Profile = () => {
       <Heading size="md" fontWeight="bold" mb={6}>
         User Profile
       </Heading>
-      <SimpleGrid columns={3}>
+      <SimpleGrid columns={{ sm: 1, md: 2, lg: 3 }}>
         <Box>
           <Flex justify="flex-end" mb={10}>
             <Button

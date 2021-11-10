@@ -15,7 +15,7 @@ const MainApp = (props) => {
       return <Redirect to={"/login"} />;
     }
   } else if (location.pathname === "/") {
-    return <Redirect to={"/app/dashboard"} />;
+    return <Redirect to={"/app/widgets/espresso"} />;
   }
   const defaultPath = `${match.url}app`;
   return (

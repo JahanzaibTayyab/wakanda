@@ -1,14 +1,18 @@
 // routes
-import Dashboard from "../pages/Dashboard";
+import Espresso from "../pages/Espresso";
 import Profile from "../pages/Profile";
 const routes = [
   {
-    path: "dashboard",
-    component: Dashboard,
+    path: "widgets/espresso",
+    component: Espresso,
   },
   {
     path: "profile",
     component: Profile,
+  },
+  {
+    path: "widgets",
+    component: Espresso,
   },
 ];
 export default routes;
