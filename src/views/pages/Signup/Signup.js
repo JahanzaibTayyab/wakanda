@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -17,8 +17,9 @@ import {
   Checkbox,
   FormErrorMessage,
   InputRightAddon,
+  useToast,
 } from "@chakra-ui/react";
-
+import { useHistory } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import { AiFillFacebook } from "react-icons/ai";
 import { FiExternalLink } from "react-icons/fi";
@@ -28,7 +29,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Logo } from "../../components/controls/Logo";
 import Link from "../../components/controls/Link";
 import Card from "../../components/controls/Card";
-import Banner from "../../components/authenticationModules/Banner";
+import { useAuth } from "../../../contexts/AuthContext";
+import { LocalStorage } from "../../../constants/LocalStorage";
 
 const schema = yup.object().shape({
   email: yup.string().email().required(),
@@ -47,14 +49,22 @@ const schema = yup.object().shape({
 });
 
 const Signup = (props) => {
-  const [email, setEmail] = useState("");
+  const history = useHistory();
+  const toast = useToast();
   const [show, setShow] = useState(false);
+  const { signInWithGoogle, registerUser, logout } = useAuth();
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showBanner, setShowBanner] = useState(false);
   const [checkedTermsAndCondition, setCheckedTermsAndCondition] =
     useState(false);
   const [checkedPrivacyPolicy, setCheckedPrivacyPolicy] = useState(false);
   const [emailAlreadyTaken, setEmailAlreadyTaken] = useState(false);
+
+  useEffect(() => {
+    const { emailAlreadyTaken } = props;
+    if (emailAlreadyTaken) {
+      setEmailAlreadyTaken(true);
+    }
+  }, [props.emailAlreadyTaken]);
 
   const {
     register,
@@ -66,11 +76,6 @@ const Signup = (props) => {
     resolver: yupResolver(schema),
   });
 
-  const handleSignUpClick = () => {
-    window.scrollTo(0, document.body.scrollHeight);
-    setShowBanner(true);
-  };
-
   const handleShowConfirmPasswordClick = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
@@ -81,20 +86,35 @@ const Signup = (props) => {
 
   const handleClick = () => setShow(!show);
 
-  const handleCloseIcon = () => {
-    setShowBanner(false);
-  };
-
-  const handleResendEmailClick = () => {};
-
-  const onSubmit = (values) => {
-    console.log(values);
-    setEmail(values.email);
+  const onSubmit = async (payload) => {
+    registerUser(payload.email, payload.password)
+      .then((res) => {
+        const data = {
+          ...res.user,
+          _tokenResponse: res._tokenResponse,
+        };
+        logout();
+        localStorage.setItem(LocalStorage.WAKANDA_EMAIL, payload.email);
+        props.signUpSuccess(data);
+        history.push({
+          pathname: "/login",
+          search: "?v=true",
+        });
+      })
+      .catch((error) => {
+        if (error.message.includes("email-already-in-use")) {
+          props.getAlreadyEmail(true);
+        } else {
+          toast({
+            position: "bottom-right",
+            description: error.message,
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      });
     reset();
-  };
-
-  const onChangeEmail = (e) => {
-    console.log(e.target.value);
   };
 
   return (
@@ -138,7 +158,9 @@ const Signup = (props) => {
                   type="email"
                   name="email"
                   {...register("email")}
-                  onFocus={onChangeEmail}
+                  onChange={() =>
+                    emailAlreadyTaken && setEmailAlreadyTaken(false)
+                  }
                 />
 
                 <FormErrorMessage>{errors?.email?.message}</FormErrorMessage>
@@ -279,14 +301,6 @@ const Signup = (props) => {
           </Card>
         </Box>
       </Box>
-      {showBanner && (
-        <Banner
-          email={email}
-          handleCloseIcon={handleCloseIcon}
-          handleResendEmailClick={handleResendEmailClick}
-          {...props}
-        />
-      )}
     </>
   );
 };
