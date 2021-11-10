@@ -5,7 +5,7 @@ import { FaReact } from "react-icons/fa";
 export const Dashboard = (props) => {
   return (
     <>
-      <EspressoContent {...props} refreshIcon={<FaReact />} />
+      <EspressoContent {...props} refreshIcon={<FaReact />} title="Espresso" />
     </>
   );
 };

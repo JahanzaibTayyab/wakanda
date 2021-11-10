@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Login from "../pages/Login";
 import MainApp from "./MainApp";
+import SignUp from "../pages/Signup";
+import ForgetPassword from "../pages/ForgetPassword";
 
 export default function AppRouting() {
   return (
@@ -10,6 +12,12 @@ export default function AppRouting() {
         <Switch>
           <Route path="/login">
             <Login />
+          </Route>
+          <Route path="/signup">
+            <SignUp />
+          </Route>
+          <Route path="/forget-password">
+            <ForgetPassword />
           </Route>
           <Route path="/" component={MainApp} />
         </Switch>

@@ -14,12 +14,15 @@ import {
   useColorModeValue,
   Flex,
   Divider,
+  useToast,
   InputRightAddon,
   VisuallyHidden,
+  chakra,
 } from "@chakra-ui/react";
 import { useLocation } from "react-router-dom";
+import { useTimer } from "use-timer";
 import { FaGoogle } from "react-icons/fa";
-import { useToast } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 import { AiFillFacebook } from "react-icons/ai";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -27,8 +30,16 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Logo } from "../../components/controls/Logo";
 import Link from "../../components/controls/Link";
 import Card from "../../components/controls/Card";
-import { Toast } from "../../../constants/Toast";
 import Banner from "../../components/authenticationModules/Banner";
+import { LocalStorage } from "../../../constants/LocalStorage";
+import { Toast } from "../../../constants/Toast";
+import { useAuth } from "../../../contexts/AuthContext";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  getRedirectResult,
+  FacebookAuthProvider,
+} from "@firebase/auth";
 
 const schema = yup.object().shape({
   email: yup.string().email().required(),
@@ -42,20 +53,96 @@ const schema = yup.object().shape({
     ),
 });
 
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
+
 const Login = (props) => {
-  const toast = useToast();
   const location = useLocation();
+  const query = useQuery();
+  const history = useHistory();
+  const toast = useToast();
+  const auth = getAuth();
+  const { time, start } = useTimer({
+    endTime: 5,
+    initialTime: 1,
+    onTimeOver: () => {
+      localStorage.setItem(LocalStorage.TOKEN, currentUser.accessToken);
+      localStorage.setItem(LocalStorage.USER_ID, currentUser.uid);
+      history.push("/app/widgets/espresso");
+    },
+  });
+  const {
+    signInWithGoogle,
+    login,
+    logout,
+    verifyToken,
+    signInWithFacebook,
+    currentUser,
+  } = useAuth();
+
   const [show, setShow] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
   const [email, setEmail] = useState("");
-  const [toastType, setToastType] = useState("Custom Login");
+  const [disabledForm, setDisabledForm] = useState(false);
+  const [isGoogleLogin, setIsGoogleLogin] = useState(false);
 
   useEffect(() => {
-    if (location.state?.forgetPassword && location.state?.email) {
+    getRedirectResult(auth)
+      .then((result) => {
+        const credential = isGoogleLogin
+          ? GoogleAuthProvider.credentialFromResult(result)
+          : FacebookAuthProvider.credentialFromResult(result);
+        const user = result.user;
+        history.replace({
+          pathname: "/login",
+          search: `oauthToken=${user.accessToken}`,
+          state: { token: user.accessToken },
+        });
+      })
+      .catch((error) => {
+        const credential = isGoogleLogin
+          ? GoogleAuthProvider.credentialFromError(error)
+          : FacebookAuthProvider.credentialFromError(error);
+      });
+  }, [auth]);
+
+  useEffect(() => {
+    if (query.get("v")) {
       setShowBanner(true);
-      setEmail(location.state?.email);
+      setEmail(localStorage.getItem(LocalStorage.WAKANDA_EMAIL));
+    }
+    if (query.get("oauthToken")) {
+      toast({
+        position: "bottom-right",
+        title: Toast.SocialLoginVerification.info.title,
+        duration: Toast.SocialLoginVerification.info.duration,
+        isClosable: true,
+      });
+      setDisabledForm(true);
+      verifyToken(query.get("oauthToken")).then((res) => {
+        start();
+        toast({
+          position: "bottom-right",
+          title: Toast.SocialLoginVerification.success.title,
+          description: `${Toast.SocialLoginVerification.success.description} ${time} `,
+          duration: Toast.SocialLoginVerification.success.duration,
+          status: "success",
+          isClosable: true,
+        });
+      });
     }
   }, [location]);
+
+  useEffect(() => {
+    const { user } = props;
+    if (user) {
+      if (!user?.emailVerified) {
+        setShowBanner(true);
+        setEmail(user.email);
+      }
+    }
+  }, [props.user]);
 
   const {
     register,
@@ -71,71 +158,46 @@ const Login = (props) => {
 
   const handleCloseIcon = () => {
     setShowBanner(false);
+    setEmail("");
+    localStorage.removeItem(LocalStorage.WAKANDA_EMAIL);
   };
 
-  const handleResendEmailClick = () => {};
-
-  const handleSignInClick = () => {
-    if (toastType === "Custom Login") {
-      toast({
-        position: "bottom-right",
-        title: Toast.EmailVerification.error.title,
-        description: Toast.EmailVerification.error.description,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      toast({
-        position: "bottom-right",
-        title: Toast.EmailVerification.success.title,
-        description: Toast.EmailVerification.success.description,
-        status: "success",
-        duration: 4000,
-        isClosable: true,
-      });
-      toast({
-        position: "bottom-right",
-        title: Toast.EmailVerification.info.title,
-        duration: 5000,
-        isClosable: true,
-      });
-    } else if (toastType === "Social Login") {
-      toast({
-        position: "bottom-right",
-        title: Toast.SocialLoginVerification.error.title,
-        description: Toast.SocialLoginVerification.error.description,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      toast({
-        position: "bottom-right",
-        title: Toast.SocialLoginVerification.success.title,
-        description: Toast.SocialLoginVerification.success.description,
-        status: "success",
-        duration: 4000,
-        isClosable: true,
-      });
-      toast({
-        position: "bottom-right",
-        title: Toast.SocialLoginVerification.info.title,
-        duration: 5000,
-        isClosable: true,
-      });
-    }
+  const handleResendEmailClick = () => {
+    props.reSendEmail({ email });
   };
 
   const handleGoogleClick = () => {
-    setToastType("Social Login");
+    setIsGoogleLogin(true);
+    signInWithGoogle();
   };
 
   const handleFaceBookClick = () => {
-    setToastType("Social Login");
+    setIsGoogleLogin(false);
+    signInWithFacebook();
   };
 
-  const onSubmit = (values) => {
-    console.log(values);
+  const onSubmit = async (payload) => {
     reset();
+    login(payload.email, payload.password)
+      .then((res) => {
+        if (res.user.emailVerified) {
+          localStorage.setItem(LocalStorage.TOKEN, res.user.accessToken);
+          localStorage.setItem(LocalStorage.USER_ID, res.user.uid);
+          history.push("/app/widgets/espresso");
+        }
+        logout();
+        props.signInSuccess(res.user);
+      })
+      .catch((error) => {
+        props.signInFailure(error.message);
+        toast({
+          position: "bottom-right",
+          description: error.message,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      });
   };
 
   return (
@@ -173,6 +235,7 @@ const Login = (props) => {
                 isInvalid={!!errors?.email?.message}
                 errortext={errors?.email?.message}
                 isRequired
+                isDisabled={disabledForm}
               >
                 <FormLabel>Email</FormLabel>
                 <Input type="email" name="email" {...register("email")} />
@@ -182,10 +245,11 @@ const Login = (props) => {
                 isInvalid={!!errors?.password?.message}
                 errortext={errors?.password?.message}
                 isRequired
+                isDisabled={disabledForm}
               >
                 <Flex justify="space-between">
                   <FormLabel>Password</FormLabel>
-                  <Link href="/forgetpassword" fontWeight="bold">
+                  <Link href="/forget-password" fontWeight="bold">
                     Forgot Password?
                   </Link>
                 </Flex>
@@ -208,7 +272,7 @@ const Login = (props) => {
                 size="lg"
                 fontSize="md"
                 onClick={handleSubmit(onSubmit)}
-                disabled={!!errors.email || !!errors.password}
+                disabled={!!errors.email || !!errors.password || disabledForm}
               >
                 Sign in
               </Button>
@@ -234,6 +298,7 @@ const Login = (props) => {
               <Button
                 color="currentColor"
                 variant="outline"
+                disabled={disabledForm}
                 onClick={handleFaceBookClick}
               >
                 <VisuallyHidden>Login with Facebook</VisuallyHidden>
@@ -243,6 +308,7 @@ const Login = (props) => {
                 color="currentColor"
                 variant="outline"
                 onClick={handleGoogleClick}
+                disabled={disabledForm}
               >
                 <VisuallyHidden>Login with Google</VisuallyHidden>
                 <FaGoogle />
