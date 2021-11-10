@@ -15,14 +15,13 @@ import { ScrollArea } from "./ScrollArea";
 import { SidebarLink } from "./SidebarLink";
 import { useMobileMenuState } from "./useMobileMenuState";
 import { UserInfo } from "./UserInfo";
-import DashboardContent from "../dashboard";
-import Profile from "../../pages/Profile";
 import { useHistory } from "react-router-dom";
 
 const SideBar = (props) => {
   const { children } = props;
   const { isOpen, toggle } = useMobileMenuState();
   const { match } = props;
+  console.log("🚀 ~ file: index.js ~ line 24 ~ SideBar ~ match", match);
   const history = useHistory();
   const path = history.location.pathname;
   return (
@@ -67,40 +66,61 @@ const SideBar = (props) => {
             </Box>
           </Box>
           <ScrollArea pt="5" pb="6">
-            <Stack pb="6">
-              <NavSectionTitle>Widgets</NavSectionTitle>
-              <SidebarLink icon={<FaReact />}>Espresso</SidebarLink>
-              <SidebarLink
-                icon={<FaReact />}
-                showComingSoon
-                href={match.url + "#"}
-              >
-                Latte
-              </SidebarLink>
-              <SidebarLink
-                icon={<FaReact />}
-                showComingSoon
-                href={match.url + "#"}
-              >
-                Flat white
-              </SidebarLink>
-              <SidebarLink
-                icon={<FaReact />}
-                showComingSoon
-                href={match.url + "#"}
-              >
-                Machiatto
-              </SidebarLink>
-            </Stack>
+            <Flex direction="column" justify="space-between">
+              <div>
+                <Stack pb="6">
+                  <NavSectionTitle>Widgets</NavSectionTitle>
+                  <SidebarLink
+                    icon={<FaReact />}
+                    href={match.url + "/widgets/espresso"}
+                    fontStyle="italic"
+                  >
+                    Espresso
+                  </SidebarLink>
+                  <SidebarLink
+                    icon={<FaReact />}
+                    showComingSoon
+                    href={match.url + "#"}
+                    fontStyle="italic"
+                  >
+                    Latte
+                  </SidebarLink>
+                  <SidebarLink
+                    icon={<FaReact />}
+                    showComingSoon
+                    href={match.url + "#"}
+                    fontStyle="italic"
+                  >
+                    Flat white
+                  </SidebarLink>
+                  <SidebarLink
+                    icon={<FaReact />}
+                    showComingSoon
+                    href={match.url + "#"}
+                    fontStyle="italic"
+                  >
+                    Machiatto
+                  </SidebarLink>
+                </Stack>
+                <Stack pb="6">
+                  <NavSectionTitle>Configuration</NavSectionTitle>
+                  <SidebarLink
+                    icon={<FaReact />}
+                    href={match.url + "/configuration/theme"}
+                  >
+                    Theme
+                  </SidebarLink>
+                </Stack>
+              </div>
+              <Flex direction="column">
+                <Divider mb={5} />
+                <Stack pb="6">
+                  <SidebarLink icon={<FaReact />}>Support</SidebarLink>
+                  <SidebarLink icon={<FaReact />}>Logout</SidebarLink>
+                </Stack>
+              </Flex>
+            </Flex>
           </ScrollArea>
-        </Box>
-
-        <Box position="fixed" bottom="10px" lineHeight="tall" width="inherit">
-          <Divider mb={5} ml={-5} />
-          <Stack pb="6">
-            <SidebarLink icon={<FaReact />}>Support</SidebarLink>
-            <SidebarLink icon={<FaReact />}>Logout</SidebarLink>
-          </Stack>
         </Box>
       </Box>
       <Box
