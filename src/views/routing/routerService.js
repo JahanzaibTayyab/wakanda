@@ -10,5 +10,9 @@ const routes = [
     path: "profile",
     component: Profile,
   },
+  {
+    path: "widgets",
+    component: Espresso,
+  },
 ];
 export default routes;

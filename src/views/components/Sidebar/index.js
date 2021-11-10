@@ -9,7 +9,7 @@ import {
 import { FaReact } from "react-icons/fa";
 import { Logo } from "../controls/DashboardLogo";
 import { MobileMenuButton } from "./MobileMenuButton";
-import { NavBreadcrumb } from "./NavBreadcrumb";
+import NavBreadcrumb from "./NavBreadcrumb";
 import { NavSectionTitle } from "./NavSectionTitle";
 import { ScrollArea } from "./ScrollArea";
 import { SidebarLink } from "./SidebarLink";
@@ -143,7 +143,7 @@ const SideBar = (props) => {
             md: "lg",
           }}
         >
-          <Flex direction="column" height="full">
+          <Flex direction="column" height="full" width="full">
             <Flex
               w="full"
               py="4"
