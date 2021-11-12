@@ -11,7 +11,6 @@ import {
   confirmPasswordReset,
   signInWithRedirect,
 } from "firebase/auth";
-
 const AuthContext = createContext({
   currentUser: null,
   signInWithGoogle: () => Promise,
