@@ -15,14 +15,14 @@ import {
 import { Logo } from "../../components/controls/Logo";
 import Link from "../../components/controls/Link";
 import Card from "../../components/controls/Card";
+import { NotionLogo } from "../../components/controls/NotionLogo";
 
 const Notion1 = () => {
- const [notion, setNotion] = useState(true)
-  const onSubmit = () => {
-   setNotion(true)
-  };
+ const [notion, setNotion] = useState(false)
+  
 
   const handleSubmit = () => {
+    setNotion(true)
    
 };
   return (
@@ -60,11 +60,12 @@ const Notion1 = () => {
                 type="submit"
                 variant="outline"
                 isLoading={notion}
+                leftIcon={<NotionLogo />}
                 loadingText= "... Loading Notion"
                 size="md"
                 fontSize="sm"
                 spinner
-                onClick={handleSubmit(onSubmit)}
+                onClick={handleSubmit}
               >
                 Connenct Notion
               </Button>
