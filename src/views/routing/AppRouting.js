@@ -5,6 +5,8 @@ import BeforeStart from "../pages/OnBoarding/BeforeStart";
 import Notion1 from "../pages/OnBoarding/Notion1";
 import Preparing from "../pages/OnBoarding/Preparing";
 import MainApp from "./MainApp";
+import SignUp from "../pages/Signup";
+import ForgetPassword from "../pages/ForgetPassword";
 
 export default function AppRouting() {
   return (
@@ -22,6 +24,12 @@ export default function AppRouting() {
           </Route>
           <Route path="/onboard">
             <Preparing />
+            </Route>
+          <Route path="/signup">
+            <SignUp />
+          </Route>
+          <Route path="/forget-password">
+            <ForgetPassword />
           </Route>
           <Route path="/" component={MainApp} />
         </Switch>
