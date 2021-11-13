@@ -1,5 +1,5 @@
 import { Box, Stack, Button, Text, HStack } from '@chakra-ui/react'
-import * as React from 'react'
+import   React, {useState , useEffect} from 'react'
 import { Step } from './Step'
 import { StepContent } from './StepContent'
 import { Steps } from './Steps'
@@ -9,6 +9,19 @@ export const OnBoardingSteps = () => {
   const { nextStep, prevStep, reset, activeStep } = useSteps({
     initialStep: 0,
   })
+  const [connectNotionSuccess, setConnentNotionSuccess] =useState(false)
+  const [connectNotionError, setConnentNotionError] =useState(false)
+  const [connectDatabaseActive, setConnentDatabaseActive] =useState(false)
+  const [connectDatabaseSuccess, setConnentDatabaseSuccess] =useState(false)
+  const [connectDatabaseError, setConnentDatabaseError] =useState(false)
+  const [embedActive, setEmbedActive] =useState(false)
+  const [embedSuccess, setEmbedSuccess] =useState(false)
+  const [embedError, setEmbedError] =useState(false)
+ 
+  useEffect(()=>{
+
+  })
+   
   return (
     <Box
       mx="auto"
@@ -21,69 +34,44 @@ export const OnBoardingSteps = () => {
       minH="400px"
     >
       <Steps activeStep={activeStep}>
-        <Step title="Select campaign settings">
-          <StepContent>
+        <Step title={connectNotionSuccess? "Notion account connected.": connectNotionError? "Error with connecting Notion account.":"Connecting your Notion account."} 
+        textColor={connectNotionSuccess? "gray.600": connectNotionError? "red.400":"yellow.500"}>
+         {connectNotionError&&
+            <StepContent>
             <Stack shouldWrapChildren spacing="4">
-              <Text>
-                For each ad campaign that you create, you can control how much you&apos;re willing
-                to spend on clicks and conversions, which networks and geographical locations you
-                want your ads to show on, and more.
+              <Text textColor="red.400">
+               this is error
               </Text>
-              <HStack>
-                <Button size="sm" variant="ghost" isDisabled>
-                  Back
-                </Button>
-                <Button size="sm" onClick={nextStep}>
-                  Next
-                </Button>
-              </HStack>
             </Stack>
           </StepContent>
+         }
         </Step>
-        <Step title="Create an ad group">
+        <Step title={connectDatabaseSuccess? "Task databse ready.": connectDatabaseError? "Error with the task database." : connectDatabaseActive? "Checking the task database." :"Check the task database."}
+        textColor={connectDatabaseSuccess? "gray.600": connectDatabaseError? "red.400" :connectDatabaseActive?"yellow.500" : "gray.400" }>
+          {connectDatabaseError &&
           <StepContent>
-            <Stack shouldWrapChildren spacing="4">
-              <Text>
-                An ad group contains one or more ads which target a shared set of keywords.
-              </Text>
-              <HStack>
-                <Button size="sm" onClick={prevStep} variant="ghost">
-                  Back
-                </Button>
-                <Button size="sm" onClick={nextStep}>
-                  Next
-                </Button>
-              </HStack>
-            </Stack>
-          </StepContent>
+          <Stack shouldWrapChildren spacing="4">
+            <Text>
+              this is error for connect database
+            </Text>
+          </Stack>
+        </StepContent>
+
+          }
         </Step>
-        <Step title="Create an ad">
+        <Step title={embedSuccess? "Widget and code embedded.": embedError? "Error embedding the widget and code.." : embedActive? "Embedding the widget and code." :"Embed the widget and code."}
+        textColor={embedSuccess? "gray.600": embedError? "red.400" :embedActive?"yellow.500" : "gray.400" }>
+          {embedError &&
           <StepContent>
-            <Stack shouldWrapChildren spacing="4">
-              <Text>
-                Try out different ad text to see what brings in the most customers, and learn how to
-                enhance your ads using features like ad extensions. If you run into any problems
-                with your ads, find out how to tell if they&apos;re running and how to resolve
-                onBoardingStepsroval issues.
-              </Text>
-              <HStack>
-                <Button size="sm" onClick={prevStep} variant="ghost">
-                  Back
-                </Button>
-                <Button size="sm" onClick={nextStep}>
-                  Finish
-                </Button>
-              </HStack>
+          <Stack shouldWrapChildren spacing="4">
+            <Text>
+              Embed Widget and dashboard error
+            </Text>
             </Stack>
-          </StepContent>
+        </StepContent>
+          }
         </Step>
       </Steps>
-      <HStack display={activeStep === 3 ? 'flex' : 'none'} mt="10" spacing="4" shouldWrapChildren>
-        <Text>All steps completed - you&apos;re finished</Text>
-        <Button size="sm" onClick={reset} variant="outline" verticalAlign="baseline">
-          Reset
-        </Button>
-      </HStack>
     </Box>
   )
 }

@@ -3,11 +3,7 @@ import {
   Box,
   Button,
   Heading,
-  FormErrorMessage,
   Text,
-  FormControl,
-  FormLabel,
-  Input,
   Stack,
   useColorModeValue,
   Flex
@@ -15,15 +11,13 @@ import {
 import { Logo } from "../../components/controls/Logo";
 import Link from "../../components/controls/Link";
 import Card from "../../components/controls/Card";
+import { useHistory } from "react-router-dom";
 
 const BeforeStart = () => {
-  
-  const onSubmit = () => {
-   
-  };
+  const history = useHistory();
 
   const handleSubmit = () => {
-   
+   history.push("/notion1");
 };
   return (
     <>
@@ -61,7 +55,7 @@ const BeforeStart = () => {
                 colorScheme="teal"
                 size="md"
                 fontSize="sm"
-                onClick={handleSubmit(onSubmit)}
+                onClick={handleSubmit}
               >
                 Continue
               </Button>

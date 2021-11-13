@@ -3,11 +3,7 @@ import {
   Box,
   Button,
   Heading,
-  FormErrorMessage,
   Text,
-  FormControl,
-  FormLabel,
-  Input,
   Stack,
   useColorModeValue,
   Flex
@@ -16,14 +12,16 @@ import { Logo } from "../../components/controls/Logo";
 import Link from "../../components/controls/Link";
 import Card from "../../components/controls/Card";
 import { NotionLogo } from "../../components/controls/NotionLogo";
-
+import { useHistory } from "react-router-dom";
 const Notion1 = () => {
  const [notion, setNotion] = useState(false)
   
-
+const history = useHistory();
   const handleSubmit = () => {
     setNotion(true)
-   
+   setTimeout(()=>{
+  history.push("/onboard")
+   },1000)
 };
   return (
     <>
