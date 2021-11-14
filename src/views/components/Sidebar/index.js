@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Flex,
@@ -16,13 +16,24 @@ import { SidebarLink } from "./SidebarLink";
 import { useMobileMenuState } from "./useMobileMenuState";
 import { UserInfo } from "./UserInfo";
 import { useHistory } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContext";
+import { LocalStorage } from "../../../constants/LocalStorage";
 
 const SideBar = (props) => {
   const { children } = props;
   const { isOpen, toggle } = useMobileMenuState();
   const { match } = props;
   const history = useHistory();
-  const path = history.location.pathname;
+  const { logout, currentUser } = useAuth();
+
+  const logoutUser = () => {
+    logout();
+    localStorage.removeItem(LocalStorage.TOKEN);
+    localStorage.removeItem(LocalStorage.USER_ID);
+    localStorage.removeItem(LocalStorage.WAKANDA_EMAIL);
+    history.push("/login");
+  };
+
   return (
     <Flex
       height="100vh"
@@ -58,9 +69,9 @@ const SideBar = (props) => {
             <Logo />
             <Box as="a" href={match.url + "/profile"} cursor="pointer">
               <UserInfo
-                name="Segun Adebayo"
-                email="segun@chakra-ui.com"
-                image="https://bit.ly/sage-adebayo"
+                name={currentUser?.displayName}
+                email={currentUser?.email}
+                image={currentUser?.photoURL}
               />
             </Box>
           </Box>
@@ -115,7 +126,9 @@ const SideBar = (props) => {
                 <Divider mb={5} />
                 <Stack pb="6">
                   <SidebarLink icon={<FaReact />}>Support</SidebarLink>
-                  <SidebarLink icon={<FaReact />}>Logout</SidebarLink>
+                  <SidebarLink icon={<FaReact />} onClick={logoutUser}>
+                    Logout
+                  </SidebarLink>
                 </Stack>
               </Flex>
             </Flex>
