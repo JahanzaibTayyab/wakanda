@@ -58,6 +58,7 @@ const useQuery = () => {
 };
 
 const Login = (props) => {
+  const { userHasWorkSpace } = props;
   const location = useLocation();
   const query = useQuery();
   const history = useHistory();
@@ -67,9 +68,13 @@ const Login = (props) => {
     endTime: 5,
     initialTime: 1,
     onTimeOver: () => {
-      localStorage.setItem(LocalStorage.TOKEN, currentUser.accessToken);
-      localStorage.setItem(LocalStorage.USER_ID, currentUser.uid);
-      history.push("/app/widgets/espresso");
+      if (userHasWorkSpace) {
+        localStorage.setItem(LocalStorage.TOKEN, currentUser.accessToken);
+        localStorage.setItem(LocalStorage.USER_ID, currentUser.uid);
+        history.push("/app/widgets/espresso");
+      } else {
+        history.push("/before");
+      }
     },
   });
   const {

@@ -15,7 +15,7 @@ import { ScrollArea } from "./ScrollArea";
 import { SidebarLink } from "./SidebarLink";
 import { useMobileMenuState } from "./useMobileMenuState";
 import { UserInfo } from "./UserInfo";
-import { useHistory } from "react-router-dom";
+import { useHistory, Redirect } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
 import { LocalStorage } from "../../../constants/LocalStorage";
 
@@ -32,6 +32,7 @@ const SideBar = (props) => {
     localStorage.removeItem(LocalStorage.USER_ID);
     localStorage.removeItem(LocalStorage.WAKANDA_EMAIL);
     history.push("/login");
+    window.location.reload(true);
   };
 
   return (
