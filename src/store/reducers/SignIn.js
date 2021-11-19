@@ -11,6 +11,9 @@ import {
   FACEBOOK_SIGN_IN,
   FACEBOOK_SIGN_IN_SUCCESS,
   FACEBOOK_SIGN_IN_FAILURE,
+  USER_DATA,
+  USER_DATA_FAILURE,
+  USER_DATA_SUCCESS,
 } from "../types";
 
 const INIT_STATE = {
@@ -18,6 +21,7 @@ const INIT_STATE = {
   response: "",
   emailSent: false,
   tokenVerified: false,
+  userHasWorkSpace: false,
   loading: false,
 };
 
@@ -91,6 +95,24 @@ const SignIn = (state = INIT_STATE, action) => {
         loading: false,
       };
     case FACEBOOK_SIGN_IN_FAILURE:
+      return {
+        ...state,
+        response: action.payload,
+        loading: false,
+      };
+    case USER_DATA:
+      return {
+        ...state,
+        loading: true,
+      };
+    case USER_DATA_SUCCESS:
+      return {
+        ...state,
+        response: action.payload,
+        userHasWorkSpace: true,
+        loading: false,
+      };
+    case USER_DATA_FAILURE:
       return {
         ...state,
         response: action.payload,

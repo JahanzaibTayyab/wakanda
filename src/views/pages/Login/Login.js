@@ -99,6 +99,7 @@ const Login = (props) => {
           ? GoogleAuthProvider.credentialFromResult(result)
           : FacebookAuthProvider.credentialFromResult(result);
         const user = result.user;
+        props.userData(user.uid);
         history.replace({
           pathname: "/login",
           search: `oauthToken=${user.accessToken}`,
@@ -147,7 +148,9 @@ const Login = (props) => {
         setEmail(user.email);
       }
     }
-  }, [props.user]);
+    if (userHasWorkSpace) {
+    }
+  }, [props.user, userHasWorkSpace]);
 
   const {
     register,
@@ -186,6 +189,7 @@ const Login = (props) => {
     login(payload.email, payload.password)
       .then((res) => {
         if (res.user.emailVerified) {
+          props.userData(res.user.uid);
           localStorage.setItem(LocalStorage.TOKEN, res.user.accessToken);
           localStorage.setItem(LocalStorage.USER_ID, res.user.uid);
           history.push("/app/widgets/espresso");

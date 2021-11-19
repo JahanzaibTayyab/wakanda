@@ -15,6 +15,7 @@ import {
   facebookSignIn,
   facebookSignInSuccess,
   facebookSignInFailure,
+  userData,
 } from "../../../store/actions/SignIn";
 
 const LoginContainer = (props) => {
@@ -27,6 +28,7 @@ const mapStateToProps = ({ SignUp, SignIn }) => {
     signInResponse: SignIn?.response,
     user: SignIn?.user,
     loading: SignIn?.loading,
+    userHasWorkSpace: SignIn?.userHasWorkSpace,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -69,6 +71,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     facebookSignInFailure: (data) => {
       dispatch(facebookSignInFailure(data));
+    },
+    userData: (data) => {
+      dispatch(userData(data));
     },
   };
 };
