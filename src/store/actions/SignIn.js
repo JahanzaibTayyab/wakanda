@@ -11,9 +11,6 @@ import {
   FACEBOOK_SIGN_IN,
   FACEBOOK_SIGN_IN_SUCCESS,
   FACEBOOK_SIGN_IN_FAILURE,
-  REST_PASSWORD,
-  REST_PASSWORD_SUCCESS,
-  REST_PASSWORD_FAILURE,
 } from "../types";
 
 export const resetSignInStates = () => ({

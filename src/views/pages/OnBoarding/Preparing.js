@@ -1,30 +1,10 @@
 import React from "react";
-import {
-  Box,
-  Button,
-  Heading,
-  FormErrorMessage,
-  Text,
-  FormControl,
-  FormLabel,
-  Input,
-  Stack,
-  useColorModeValue,
-  Flex
-} from "@chakra-ui/react";
+import { Box, Heading, Text, useColorModeValue, Flex } from "@chakra-ui/react";
 import { Logo } from "../../components/controls/Logo";
 
 import { OnBoardingSteps } from "./OnBoardingSteps/OnBordingSteps";
 
-const Preparing = () => {
-  
-  const onSubmit = () => {
-   
-  };
-
-  const handleSubmit = () => {
-   
-};
+const Preparing = (props) => {
   return (
     <>
       <Box
@@ -46,15 +26,22 @@ const Preparing = () => {
             }}
           />
           <Heading textAlign="center" size="xl" fontWeight="extrabold">
-          Preparing your productivity boost
+            Preparing your productivity boost
           </Heading>
-          <Text mt="4" mb="8" align="center" maxW="md" fontWeight="400" fontSize='18px'>
-          Just a minute and it’ll be ready...
-            </Text>
-           
-          <Flex justify='center' mb='2'>
-           <OnBoardingSteps />
-            </Flex>
+          <Text
+            mt="4"
+            mb="8"
+            align="center"
+            maxW="md"
+            fontWeight="400"
+            fontSize="18px"
+          >
+            Just a minute and it’ll be ready...
+          </Text>
+
+          <Flex justify="center" mb="2">
+            <OnBoardingSteps />
+          </Flex>
         </Box>
       </Box>
     </>
