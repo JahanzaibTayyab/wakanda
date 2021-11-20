@@ -1,8 +1,13 @@
 import React from "react";
 import { Box, Heading, Text, useColorModeValue, Flex } from "@chakra-ui/react";
+import { connect } from "react-redux";
 import { Logo } from "../../components/controls/Logo";
-
-import { OnBoardingSteps } from "./OnBoardingSteps/OnBordingSteps";
+import { OnBoardingSteps } from "./OnBoardingSteps/OnBoardingSteps";
+import { notionOAuthToken } from "../../../store/actions/NotionAuth";
+import {
+  generatePinCode,
+  generateUniqueUrl,
+} from "../../../store/actions/Preparing";
 
 const Preparing = (props) => {
   return (
@@ -40,7 +45,7 @@ const Preparing = (props) => {
           </Text>
 
           <Flex justify="center" mb="2">
-            <OnBoardingSteps />
+            <OnBoardingSteps {...props} />
           </Flex>
         </Box>
       </Box>
@@ -48,4 +53,31 @@ const Preparing = (props) => {
   );
 };
 
-export default Preparing;
+const mapStateToProps = ({ NotionAuth, Preparing }) => {
+  return {
+    loading: NotionAuth?.loading,
+    redirectedUrl: NotionAuth?.oauthUrl?.redirectUrl,
+    response: NotionAuth?.response,
+    error: NotionAuth?.error,
+    uniqueLinkGenerated: Preparing?.uniqueLinkGenerated,
+    pinCodeGenerated: Preparing?.pinCodeGenerated,
+    preparingError: Preparing?.error,
+    preparingResponse: Preparing?.response,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    notionOAuthToken: (userData) => {
+      dispatch(notionOAuthToken(userData));
+    },
+    generateUniqueUrl: (data) => {
+      dispatch(generateUniqueUrl(data));
+    },
+    generatePinCode: (userData) => {
+      dispatch(generatePinCode(userData));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Preparing);
