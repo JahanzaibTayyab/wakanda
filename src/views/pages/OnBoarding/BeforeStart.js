@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Button,
@@ -11,10 +11,9 @@ import {
 } from "@chakra-ui/react";
 import { Logo } from "../../components/controls/Logo";
 import Link from "../../components/controls/Link";
-import Card from "../../components/controls/Card";
 import { useHistory } from "react-router-dom";
 
-const BeforeStart = () => {
+const BeforeStart = (props) => {
   const history = useHistory();
 
   const handelClick = () => {

@@ -6,6 +6,10 @@ export const SIGN_UP = "SIGN_UP";
 export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";
 export const SIGN_UP_FAILURE = "SIGN_UP_FAILURE";
 
+export const USER_DATA = "USER_DATA";
+export const USER_DATA_SUCCESS = "USER_DATA_SUCCESS";
+export const USER_DATA_FAILURE = "USER_DATA_FAILURE";
+
 export const EMAIL_ALREADY_TAKEN = "EMAIL_ALREADY_TAKEN";
 
 export const LOG_OUT_USER = "LOG_OUT_USER";
