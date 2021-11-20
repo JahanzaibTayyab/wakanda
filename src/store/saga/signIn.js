@@ -50,7 +50,9 @@ function* getUserDocument({ payload }) {
         if (!payload.socialLogin) {
           // localStorage.setItem(LocalStorage.TOKEN, payload.user.accessToken);
           // localStorage.setItem(LocalStorage.USER_ID, payload.user.uid);
-          payload.history.push("/app/before");
+          if (payload.user?.emailVerified) {
+            payload.history.push("/app/before");
+          }
         }
         yield put(
           userDataFailure({

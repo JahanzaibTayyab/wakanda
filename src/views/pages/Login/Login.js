@@ -198,9 +198,9 @@ const Login = (props) => {
         if (res.user.emailVerified) {
           props.signInSuccess(res.user);
           props.userData({ user: res.user, history });
-          localStorage.setItem(LocalStorage.TOKEN, res.user.accessToken);
-          localStorage.setItem(LocalStorage.USER_ID, res.user.uid);
-          history.push("/app/widgets/espresso");
+          // localStorage.setItem(LocalStorage.TOKEN, res.user.accessToken);
+          // localStorage.setItem(LocalStorage.USER_ID, res.user.uid);
+          // history.push("/app/widgets/espresso");
         } else {
           logout();
           props.signInSuccess(res.user);
