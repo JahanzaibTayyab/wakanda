@@ -14,6 +14,9 @@ import {
   USER_DATA,
   USER_DATA_SUCCESS,
   USER_DATA_FAILURE,
+  VERIFY_TOKEN,
+  VERIFY_TOKEN_SUCCESS,
+  VERIFY_TOKEN_FAILURE,
 } from "../types";
 
 export const resetSignInStates = () => ({
@@ -111,6 +114,25 @@ export const userDataSuccess = (response) => {
 export const userDataFailure = (response) => {
   return {
     type: USER_DATA_FAILURE,
+    payload: response,
+  };
+};
+
+export const verifyToken = (data) => {
+  return {
+    type: VERIFY_TOKEN,
+    payload: data,
+  };
+};
+export const verifyTokenSuccess = (response) => {
+  return {
+    type: VERIFY_TOKEN_SUCCESS,
+    payload: response,
+  };
+};
+export const verifyTokenFailure = (response) => {
+  return {
+    type: VERIFY_TOKEN_FAILURE,
     payload: response,
   };
 };
