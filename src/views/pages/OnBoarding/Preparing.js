@@ -53,16 +53,16 @@ const Preparing = (props) => {
   );
 };
 
-const mapStateToProps = ({ NotionAuth, Preparing }) => {
+const mapStateToProps = ({ NotionAuth, Dashboard }) => {
   return {
     loading: NotionAuth?.loading,
     redirectedUrl: NotionAuth?.oauthUrl?.redirectUrl,
     response: NotionAuth?.response,
     error: NotionAuth?.error,
-    uniqueLinkGenerated: Preparing?.uniqueLinkGenerated,
-    pinCodeGenerated: Preparing?.pinCodeGenerated,
-    preparingError: Preparing?.error,
-    preparingResponse: Preparing?.response,
+    uniqueLinkGenerated: Dashboard?.uniqueLinkGenerated,
+    pinCodeGenerated: Dashboard?.pinCodeGenerated,
+    dashboardError: Dashboard?.error,
+    dashboardResponse: Dashboard?.response,
   };
 };
 
