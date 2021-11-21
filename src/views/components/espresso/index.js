@@ -27,8 +27,9 @@ import { ModalToast } from "../../../constants/_data/Mockup";
 import Loader from "../controls/Loader";
 
 const DashboardContent = (props) => {
-  const { title } = props;
-
+  const { title , databases, pages } = props;
+  console.log('databaes', databases);
+  console.log('pages', pages);
   const toast = useToast();
 
   const [enableSwitch, setEnabledSwitch] = useState(false);

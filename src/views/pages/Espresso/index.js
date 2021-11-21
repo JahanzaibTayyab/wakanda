@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { connect } from "react-redux";
 import Espresso from "./Espresso";
 import { notionOAuthToken } from "../../../store/actions/NotionAuth";
@@ -8,8 +8,9 @@ import {
   generateUniqueUrl,
   findDataBase,
   findPage,
+  embededPinCode,
 } from "../../../store/actions/Dashboard";
-
+import { databases, pages } from "../../../constants/_data/Mockup";
 const EspressoContainer = (props) => {
   return <Espresso {...props} />;
 };
@@ -24,8 +25,10 @@ const mapStateToProps = ({ NotionAuth, Dashboard, Profile }) => {
     pinCodeGenerated: Dashboard?.pinCodeGenerated,
     dashboardError: Dashboard?.error,
     dashboardResponse: Dashboard?.response,
-    databases: Dashboard?.databases,
-    pages: Dashboard?.pages,
+   // databases: Dashboard?.databases,
+    databases: databases,
+    //pages: Dashboard?.pages,
+    pages: pages,
     user: Profile?.data,
   };
 };
@@ -49,6 +52,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     getProfile: (userData) => {
       dispatch(findPage(userData));
+    },
+    embededPinCode: (data) => {
+      dispatch(embededPinCode(data));
     },
   };
 };

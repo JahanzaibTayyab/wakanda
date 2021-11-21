@@ -13,12 +13,15 @@ import {
   generateUniqueUrl,
   generateUniqueUrlFailure,
   findPage,
+  embededPinCodeSuccess,
+  embededPinCodeFailure,
 } from "../actions/Dashboard";
 import {
   FIND_DATABASE,
   FIND_PAGE,
   GENERATE_PIN_CODE,
   GENERATE_UNIQUE_URL,
+  EMBEDED_PIN_CODE,
 } from "../types";
 
 import { generatePinCode, generateUrl } from "../../utils/helperFunctions";
