@@ -7,7 +7,10 @@ import { notionOAuthToken } from "../../../store/actions/NotionAuth";
 import {
   generatePinCode,
   generateUniqueUrl,
+  findDataBase,
+  findPage,
 } from "../../../store/actions/Dashboard";
+import { saveData } from "../../../store/actions/Profile";
 
 const Preparing = (props) => {
   return (
@@ -35,7 +38,6 @@ const Preparing = (props) => {
           </Heading>
           <Text
             mt="4"
-            mb="8"
             align="center"
             maxW="md"
             fontWeight="400"
@@ -63,6 +65,8 @@ const mapStateToProps = ({ NotionAuth, Dashboard }) => {
     pinCodeGenerated: Dashboard?.pinCodeGenerated,
     dashboardError: Dashboard?.error,
     dashboardResponse: Dashboard?.response,
+    databases: Dashboard?.databases,
+    pages: Dashboard?.pages,
   };
 };
 
@@ -74,8 +78,17 @@ const mapDispatchToProps = (dispatch) => {
     generateUniqueUrl: (data) => {
       dispatch(generateUniqueUrl(data));
     },
-    generatePinCode: (userData) => {
-      dispatch(generatePinCode(userData));
+    generatePinCode: (data) => {
+      dispatch(generatePinCode(data));
+    },
+    findDataBase: (data) => {
+      dispatch(findDataBase(data));
+    },
+    findPage: (data) => {
+      dispatch(findPage(data));
+    },
+    saveData: (data) => {
+      dispatch(saveData(data));
     },
   };
 };

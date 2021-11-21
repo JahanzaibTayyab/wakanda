@@ -72,6 +72,8 @@ const Login = (props) => {
         localStorage.setItem(LocalStorage.USER_ID, currentUser.uid);
         history.push("/app/widgets/espresso");
       } else {
+        localStorage.setItem(LocalStorage.TOKEN, currentUser.accessToken);
+        localStorage.setItem(LocalStorage.USER_ID, currentUser.uid);
         history.push("/before");
       }
     },
