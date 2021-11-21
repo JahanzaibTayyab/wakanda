@@ -7,11 +7,17 @@ import { useSteps } from "./useSteps";
 import { Toast } from "../../../../constants/Toast";
 import { LocalStorage } from "../../../../constants/LocalStorage";
 import { useAuth } from "../../../../contexts/AuthContext";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
+
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
 
 export const OnBoardingSteps = (props) => {
   const toast = useToast();
   const { currentUser } = useAuth();
+  const location = useLocation();
+  const query = useQuery();
   const history = useHistory();
   const { nextStep, prevStep, reset, activeStep } = useSteps({
     initialStep: 0,
@@ -40,6 +46,69 @@ export const OnBoardingSteps = (props) => {
       history.push("/app/widgets/espresso");
     }, [3000]);
   });
+  // dummy code
+  // useEffect(() => {
+  //   if (currentUser) {
+  //     props.notionOAuthToken({
+  //       code: "e9840cab-5d10-4bf3-ac70-0b1913d907e9",
+  //       id: currentUser?.uid,
+  //     });
+  //   }
+  // }, [currentUser]);
+
+  useEffect(() => {
+    const { response, error } = props;
+    if (response) {
+      setConnentNotionError(false);
+      setConnentNotionSuccess(true);
+      setConnentDatabaseActive(true);
+      props.saveData({
+        id: currentUser.uid,
+        data: {
+          workspaceIcon: response?.data?.workspaceIcon,
+          workspace: response?.data?.workspace,
+        },
+      });
+      nextStep();
+      props.findDataBase({ id: currentUser.uid });
+    }
+    if (error) {
+      setConnentNotionError(true);
+    }
+  }, [props.response, props.error]);
+
+  useEffect(() => {
+    const { databases, dashboardError, pages } = props;
+    if (activeStep === 1) {
+      if (databases && pages) {
+        setConnentNotionError(false);
+        setConnentDatabaseSuccess(true);
+        setEmbedActive(true);
+        props.saveData({
+          id: currentUser.uid,
+          data: {
+            database: databases[0]?.id,
+            page: pages[0]?.id,
+          },
+        });
+        nextStep();
+      }
+      if (dashboardError) {
+        setConnentDatabaseError(true);
+      }
+    }
+  }, [props.databases, props.pages]);
+
+  useEffect(() => {
+    if (currentUser) {
+      if (query.get("code")) {
+        props.notionOAuthToken({
+          code: query.get("code"),
+          id: currentUser?.uid,
+        });
+      }
+    }
+  }, [location, currentUser]);
 
   return (
     <Box
@@ -61,18 +130,12 @@ export const OnBoardingSteps = (props) => {
               ? "Error with connecting Notion account."
               : "Connecting your Notion account."
           }
-          textColor={
-            connectNotionSuccess
-              ? "gray.600"
-              : connectNotionError
-              ? "red.400"
-              : "yellow.500"
-          }
+          isError={connectNotionError}
         >
           {connectNotionError && (
             <StepContent>
               <Stack shouldWrapChildren spacing="4">
-                <Text textColor="red.400">this is error</Text>
+                <Text textColor="red.400">{props.error?.message}</Text>
               </Stack>
             </StepContent>
           )}
@@ -80,27 +143,19 @@ export const OnBoardingSteps = (props) => {
         <Step
           title={
             connectDatabaseSuccess
-              ? "Task databse ready."
+              ? "Task database ready."
               : connectDatabaseError
               ? "Error with the task database."
               : connectDatabaseActive
               ? "Checking the task database."
               : "Check the task database."
           }
-          textColor={
-            connectDatabaseSuccess
-              ? "gray.600"
-              : connectDatabaseError
-              ? "red.400"
-              : connectDatabaseActive
-              ? "yellow.500"
-              : "gray.400"
-          }
+          isError={connectDatabaseError}
         >
           {connectDatabaseError && (
             <StepContent>
               <Stack shouldWrapChildren spacing="4">
-                <Text>this is error for connect database</Text>
+                <Text textColor="red.400">{props.dashboardError?.message}</Text>
               </Stack>
             </StepContent>
           )}
@@ -115,20 +170,14 @@ export const OnBoardingSteps = (props) => {
               ? "Embedding the widget and code."
               : "Embed the widget and code."
           }
-          textColor={
-            embedSuccess
-              ? "gray.600"
-              : embedError
-              ? "red.400"
-              : embedActive
-              ? "yellow.500"
-              : "gray.400"
-          }
+          isError={embedError}
         >
           {embedError && (
             <StepContent>
               <Stack shouldWrapChildren spacing="4">
-                <Text>Embed Widget and dashboard error</Text>
+                <Text textColor="red.400">
+                  Embed Widget and dashboard error
+                </Text>
               </Stack>
             </StepContent>
           )}

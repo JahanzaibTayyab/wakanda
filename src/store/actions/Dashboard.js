@@ -5,6 +5,12 @@ import {
   GENERATE_UNIQUE_URL,
   GENERATE_UNIQUE_URL_SUCCESS,
   GENERATE_UNIQUE_URL_FAILURE,
+  FIND_DATABASE,
+  FIND_DATABASE_SUCCESS,
+  FIND_DATABASE_FAILURE,
+  FIND_PAGE,
+  FIND_PAGE_FAILURE,
+  FIND_PAGE_SUCCESS,
 } from "../types";
 
 export const resetPreparingStates = () => ({
@@ -28,7 +34,7 @@ export const generatePinCodeFailure = (error) => ({
 
 export const generateUniqueUrl = (data) => ({
   type: GENERATE_UNIQUE_URL,
-  data,
+  payload: data,
 });
 
 export const generateUniqueUrlSuccess = (data) => ({
@@ -38,5 +44,35 @@ export const generateUniqueUrlSuccess = (data) => ({
 
 export const generateUniqueUrlFailure = (error) => ({
   type: GENERATE_UNIQUE_URL_FAILURE,
+  payload: error,
+});
+
+export const findPage = (data) => ({
+  type: FIND_PAGE,
+  payload: data,
+});
+
+export const findPageSuccess = (data) => ({
+  type: FIND_PAGE_SUCCESS,
+  payload: data,
+});
+
+export const findPageFailure = (error) => ({
+  type: FIND_PAGE_FAILURE,
+  payload: error,
+});
+
+export const findDataBase = (data) => ({
+  type: FIND_DATABASE,
+  payload: data,
+});
+
+export const findDataBaseSuccess = (data) => ({
+  type: FIND_DATABASE_SUCCESS,
+  payload: data,
+});
+
+export const findDataBaseFailure = (error) => ({
+  type: FIND_DATABASE_FAILURE,
   payload: error,
 });

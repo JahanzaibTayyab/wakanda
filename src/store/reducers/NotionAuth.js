@@ -13,7 +13,7 @@ const INIT_STATE = {
   loading: false,
 };
 
-const SignUp = (state = INIT_STATE, action) => {
+const NotionAuth = (state = INIT_STATE, action) => {
   switch (action.type) {
     case "RESET_NOTION_AUTH_STATES":
       return INIT_STATE;
@@ -33,4 +33,4 @@ const SignUp = (state = INIT_STATE, action) => {
       return { ...state };
   }
 };
-export default SignUp;
+export default NotionAuth;

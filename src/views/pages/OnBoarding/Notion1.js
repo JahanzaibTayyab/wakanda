@@ -16,7 +16,7 @@ import { NotionLogo } from "../../components/controls/NotionLogo";
 import { useHistory } from "react-router-dom";
 import { notionOAuthUlr } from "../../../store/actions/NotionAuth";
 const Notion1 = (props) => {
-  const { redirectedUrl, response, error } = props;
+  const { redirectedUrl, error } = props;
   const [notion, setNotion] = useState(true);
   const toast = useToast();
   const history = useHistory();
