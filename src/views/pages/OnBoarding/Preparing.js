@@ -7,7 +7,7 @@ import { notionOAuthToken } from "../../../store/actions/NotionAuth";
 import {
   generatePinCode,
   generateUniqueUrl,
-} from "../../../store/actions/Preparing";
+} from "../../../store/actions/Dashboard";
 
 const Preparing = (props) => {
   return (
