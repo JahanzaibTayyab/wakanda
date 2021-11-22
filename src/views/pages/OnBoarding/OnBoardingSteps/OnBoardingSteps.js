@@ -14,6 +14,13 @@ const useQuery = () => {
 };
 
 export const OnBoardingSteps = (props) => {
+  const {
+    uniqueLinkGenerated,
+    pinCodeGenerated,
+    dashboardError,
+    dashboardResponse,
+  } = props;
+
   const toast = useToast();
   const { currentUser } = useAuth();
   const location = useLocation();
@@ -46,13 +53,21 @@ export const OnBoardingSteps = (props) => {
       history.push("/app/widgets/espresso");
     }, [3000]);
   });
-  // dummy code
+  //dummy code
   // useEffect(() => {
   //   if (currentUser) {
-  //     props.notionOAuthToken({
-  //       code: "e9840cab-5d10-4bf3-ac70-0b1913d907e9",
-  //       id: currentUser?.uid,
-  //     });
+  //     // props.notionOAuthToken({
+  //     //   code: "e9840cab-5d10-4bf3-ac70-0b1913d907e9",
+  //     //   id: currentUser?.uid,
+  //     // });
+  //     nextStep();
+  //     setTimeout(() => {
+  //       nextStep();
+  //     }, [3000]);
+  //     setTimeout(() => {
+  //       nextStep();
+  //       props.generatePinCode();
+  //     }, [8000]);
   //   }
   // }, [currentUser]);
 
@@ -109,6 +124,47 @@ export const OnBoardingSteps = (props) => {
       }
     }
   }, [location, currentUser]);
+
+  useEffect(() => {
+    if (pinCodeGenerated) {
+      if (dashboardResponse) {
+        props.saveData({
+          id: currentUser?.uid,
+          data: {
+            pinCode: dashboardResponse,
+          },
+        });
+      }
+      props.generateUniqueUrl();
+    }
+  }, [pinCodeGenerated]);
+
+  useEffect(() => {
+    if (uniqueLinkGenerated) {
+      if (dashboardResponse) {
+        props.saveData({
+          id: currentUser?.uid,
+          data: {
+            uniqueUrl: dashboardResponse,
+          },
+        });
+      }
+      props.resetPreparingStates();
+      props.resetNotionAuthStates();
+      props.resetSignInStates();
+      toast({
+        position: "bottom-right",
+        title: Toast.SocialLoginVerification.success.title,
+        description: `${Toast.SocialLoginVerification.success.description} 0 `,
+        duration: Toast.SocialLoginVerification.success.duration,
+        status: "success",
+        isClosable: true,
+      });
+      localStorage.setItem(LocalStorage.TOKEN, currentUser.accessToken);
+      localStorage.setItem(LocalStorage.USER_ID, currentUser.uid);
+      history.push("/app/widgets/espresso");
+    }
+  }, [uniqueLinkGenerated]);
 
   return (
     <Box

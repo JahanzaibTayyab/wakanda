@@ -3,8 +3,13 @@ import { Box, Heading, Text, useColorModeValue, Flex } from "@chakra-ui/react";
 import { connect } from "react-redux";
 import { Logo } from "../../components/controls/Logo";
 import { OnBoardingSteps } from "./OnBoardingSteps/OnBoardingSteps";
-import { notionOAuthToken } from "../../../store/actions/NotionAuth";
 import {
+  notionOAuthToken,
+  resetNotionAuthStates,
+} from "../../../store/actions/NotionAuth";
+import { resetSignInStates } from "../../../store/actions/SignIn";
+import {
+  resetPreparingStates,
   generatePinCode,
   generateUniqueUrl,
   findDataBase,
@@ -89,6 +94,15 @@ const mapDispatchToProps = (dispatch) => {
     },
     saveData: (data) => {
       dispatch(saveData(data));
+    },
+    resetNotionAuthStates: (data) => {
+      dispatch(resetNotionAuthStates(data));
+    },
+    resetSignInStates: (data) => {
+      dispatch(resetSignInStates(data));
+    },
+    resetPreparingStates: (data) => {
+      dispatch(resetPreparingStates(data));
     },
   };
 };

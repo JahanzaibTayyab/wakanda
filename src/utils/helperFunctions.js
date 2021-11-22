@@ -18,6 +18,8 @@ const generatePinCode = () => {
     length: 8,
     numbers: true,
     lowercase: true,
+    uppercase: false,
+    excludeSimilarCharacters: true,
   });
 };
 export { generateUrl, generatePinCode };
