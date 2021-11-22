@@ -32,7 +32,7 @@ const DashboardContent = (props) => {
   const toast = useToast();
 
   const [enableSwitch, setEnabledSwitch] = useState(false);
-  const [showLoader, setShowLoader] = useState(true);
+  const [showLoader, setShowLoader] = useState(false);
   const [disabledRefreshLinkButton, setDisabledRefreshLinkButton] =
     useState(false);
   const [showRefreshLinkModal, setShowRefreshLinkModal] = useState(false);

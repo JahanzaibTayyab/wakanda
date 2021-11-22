@@ -47,8 +47,8 @@ const mapDispatchToProps = (dispatch) => {
     findPage: (userData) => {
       dispatch(findPage(userData));
     },
-    getProfile: (userData) => {
-      dispatch(findPage(userData));
+    getProfile: (data) => {
+      dispatch(getProfile(data));
     },
   };
 };

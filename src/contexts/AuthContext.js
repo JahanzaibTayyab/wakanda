@@ -10,6 +10,9 @@ import {
   signOut,
   confirmPasswordReset,
   signInWithRedirect,
+  updateEmail,
+  sendEmailVerification,
+  getAuth,
 } from "firebase/auth";
 const AuthContext = createContext({
   currentUser: null,
@@ -21,6 +24,8 @@ const AuthContext = createContext({
   resetPassword: () => Promise,
   signInWithFacebook: () => Promise,
   verifyToken: () => Promise(),
+  updateUserEmail: () => Promise(),
+  sendUserEmailVerification: () => Promise(),
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -77,6 +82,14 @@ export default function AuthContextProvider({ children }) {
     return signInWithRedirect(auth, provider);
   }
 
+  function updateUserEmail(email) {
+    return updateEmail(auth, email);
+  }
+  function sendUserEmailVerification() {
+    const auth = getAuth();
+    return sendEmailVerification(auth.currentUser);
+  }
+
   const value = {
     currentUser,
     signInWithGoogle,
@@ -87,6 +100,8 @@ export default function AuthContextProvider({ children }) {
     resetPassword,
     verifyToken,
     signInWithFacebook,
+    updateUserEmail,
+    sendUserEmailVerification,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
