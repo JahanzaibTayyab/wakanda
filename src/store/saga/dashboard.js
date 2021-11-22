@@ -7,6 +7,11 @@ import {
   findDataBaseSuccess,
   findPageFailure,
   findPageSuccess,
+  generatePinCodeSuccess,
+  generatePinCodeFailure,
+  generateUniqueUrlSuccess,
+  generateUniqueUrl,
+  generateUniqueUrlFailure,
   findPage,
 } from "../actions/Dashboard";
 import {
@@ -15,6 +20,8 @@ import {
   GENERATE_PIN_CODE,
   GENERATE_UNIQUE_URL,
 } from "../types";
+
+import { generatePinCode, generateUrl } from "../../utils/helperFunctions";
 
 const getFindPageApi = async (payload) => {
   const listPages = httpsCallable(functions, "listpages");
@@ -79,6 +86,57 @@ export function* callFindDataBase() {
   yield takeEvery(FIND_DATABASE, getFindDataBase);
 }
 
+const getGeneratePinCodeApi = async (payload) => {
+  return generatePinCode();
+};
+function* getGeneratePinCode({ payload }) {
+  try {
+    const data = yield retry(
+      MAX_RETRY_COUNT,
+      RETRY_INTERVAL,
+      getGeneratePinCodeApi,
+      payload
+    );
+    if (data) {
+      yield put(generatePinCodeSuccess(data));
+    }
+  } catch (error) {
+    yield put(generatePinCodeFailure(error));
+  }
+}
+
+export function* callGeneratePinCode() {
+  yield takeEvery(GENERATE_PIN_CODE, getGeneratePinCode);
+}
+
+const getGenerateUniqueUrlApi = async (payload) => {
+  return generateUrl();
+};
+function* getGenerateUniqueUrl({ payload }) {
+  try {
+    const data = yield retry(
+      MAX_RETRY_COUNT,
+      RETRY_INTERVAL,
+      getGenerateUniqueUrlApi,
+      payload
+    );
+    if (data) {
+      yield put(generateUniqueUrlSuccess(data));
+    }
+  } catch (error) {
+    yield put(generateUniqueUrlFailure(error));
+  }
+}
+
+export function* callGenerateUniqueUrl() {
+  yield takeEvery(GENERATE_UNIQUE_URL, getGenerateUniqueUrl);
+}
+
 export default function* rootSaga() {
-  yield all([fork(callFindPage), fork(callFindDataBase)]);
+  yield all([
+    fork(callFindPage),
+    fork(callFindDataBase),
+    fork(callGeneratePinCode),
+    fork(callGenerateUniqueUrl),
+  ]);
 }
