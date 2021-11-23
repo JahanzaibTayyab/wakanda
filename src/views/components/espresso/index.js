@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -8,32 +8,29 @@ import {
   Divider,
   Button,
   Switch,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Icon,
   useToast,
+  Select,
 } from "@chakra-ui/react";
 import { ChevronDownIcon, InfoOutlineIcon } from "@chakra-ui/icons";
-import { FaReact } from "react-icons/fa";
 import RefreshLink from "./RefreshLink";
 import "./dashboard.css";
 import RefreshLinkModal from "./Modals/RefreshLinkModal";
 import ChangeDatabaseModal from "./Modals/ChangeDatabaseModal";
 import ChangePageModal from "./Modals/ChangePageModal";
 import EmbedInNotionModal from "./Modals/EmbedInNotionModal";
-import { ModalToast } from "../../../constants/_data/Mockup";
+import { ModalToast } from "../../../constants/Toast";
 import Loader from "../controls/Loader";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const DashboardContent = (props) => {
-  const { title , databases, pages } = props;
-  console.log('databaes', databases);
-  console.log('pages', pages);
+  const { title, databases, pages, user } = props;
+  const { currentUser } = useAuth();
+
   const toast = useToast();
 
   const [enableSwitch, setEnabledSwitch] = useState(false);
-  const [showLoader, setShowLoader] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
+  const [initialRendering, setInitialRendering] = useState(true);
   const [disabledRefreshLinkButton, setDisabledRefreshLinkButton] =
     useState(false);
   const [showRefreshLinkModal, setShowRefreshLinkModal] = useState(false);
@@ -42,6 +39,108 @@ const DashboardContent = (props) => {
   const [showChangeDatabaseModal, setShowChangeDatabaseModal] = useState(false);
   const [disabledEmbedWidgetButton, setDisabledEmbedWidgetButton] =
     useState(false);
+  const [databaseOptionValue, setDatabaseOptionValue] = useState();
+  const [pageOptionValue, setPageOptionValue] = useState();
+  const [showPageError, setShowPageError] = useState(false);
+
+  useEffect(() => {
+    if (initialRendering) {
+      props.findDataBase();
+      props.findPage();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      if (initialRendering) {
+        if (!user?.page || !user?.pinCode || !user?.uniqueUrl) {
+          setShowPageError(true);
+          props.generateUniqueUrl();
+          props.generatePinCode();
+        }
+      }
+    }
+  }, [user]);
+
+  useEffect(() => {
+    const { dashboardResponse, pinCodeGenerated } = props;
+    if (pinCodeGenerated && showPageError) {
+      props.saveData({
+        id: currentUser?.uid,
+        data: { pinCode: dashboardResponse },
+      });
+      props.getProfile();
+      toast({
+        position: "bottom-right",
+        title: "Unique Url and pinCode generated",
+        status: "success",
+        isClosable: true,
+      });
+    }
+  }, [props.pinCodeGenerated]);
+
+  useEffect(() => {
+    if (initialRendering) {
+      if (databases && pages) {
+        setInitialRendering(false);
+        setShowLoader(false);
+      }
+    }
+  }, [pages, databases]);
+
+  useEffect(() => {
+    const { uniqueLinkGenerated, dashboardResponse } = props;
+    if (uniqueLinkGenerated) {
+      if ((dashboardResponse && showRefreshLinkModal) || showPageError) {
+        props.saveData({
+          id: currentUser?.uid,
+          data: { uniqueUrl: dashboardResponse },
+        });
+        if (showRefreshLinkModal) {
+          toast({
+            position: "bottom-right",
+            title: ModalToast.RefreshLink.success.title,
+            description: ModalToast.RefreshLink.success.description,
+            duration: ModalToast.RefreshLink.success.duration,
+            status: "success",
+            isClosable: true,
+          });
+        }
+        setDisabledRefreshLinkButton(false);
+        setShowRefreshLinkModal(false);
+      }
+    }
+  }, [props.uniqueLinkGenerated]);
+
+  useEffect(() => {
+    const { dashboardResponse, dashboardError } = props;
+    if (dashboardResponse) {
+      if (showChangePageModal) {
+        if (dashboardResponse?.pinCodeBlock) {
+          setShowPageError(false);
+          props.getProfile();
+          toast({
+            position: "bottom-right",
+            title: ModalToast.ChangePage.success.title,
+            description: ModalToast.ChangePage.success.description,
+            duration: ModalToast.ChangePage.success.duration,
+            status: "success",
+            isClosable: true,
+          });
+          setShowChangePageModal(false);
+        }
+      }
+    }
+    if (dashboardError) {
+      setShowChangePageModal(false);
+      setShowRefreshLinkModal(false);
+      setDisabledEmbedWidgetButton(false);
+      setDisabledRefreshLinkButton(false);
+      setShowChangePageModal(false);
+      setShowEmbedInNotionModal(false);
+    }
+  }, [props.dashboardResponse, props.dashboardError]);
+
   const handleRefreshLinkClick = () => {
     setDisabledRefreshLinkButton(true);
     setShowRefreshLinkModal(true);
@@ -57,16 +156,7 @@ const DashboardContent = (props) => {
   };
 
   const handelOkClickRefreshLinkModal = () => {
-    toast({
-      position: "bottom-right",
-      title: ModalToast.RefreshLink.success.title,
-      description: ModalToast.RefreshLink.success.description,
-      duration: ModalToast.RefreshLink.success.duration,
-      status: "success",
-      isClosable: true,
-    });
-    setDisabledRefreshLinkButton(false);
-    setShowRefreshLinkModal(false);
+    props.generateUniqueUrl();
   };
 
   const handelCancelClickRefreshLinkModal = () => {
@@ -75,6 +165,10 @@ const DashboardContent = (props) => {
   };
 
   const handelOkClickChangeDatabaseModal = () => {
+    props.saveData({
+      id: currentUser?.uid,
+      data: { database: databaseOptionValue },
+    });
     toast({
       position: "bottom-right",
       title: ModalToast.ChangeDatabase.success.title,
@@ -83,6 +177,7 @@ const DashboardContent = (props) => {
       status: "success",
       isClosable: true,
     });
+    props.getProfile();
     setShowChangeDatabaseModal(false);
   };
 
@@ -91,15 +186,11 @@ const DashboardContent = (props) => {
   };
 
   const handelOkClickChangePageModal = () => {
-    toast({
-      position: "bottom-right",
-      title: ModalToast.ChangePage.success.title,
-      description: ModalToast.ChangePage.success.description,
-      duration: ModalToast.ChangePage.success.duration,
-      status: "success",
-      isClosable: true,
+    props.saveData({
+      id: currentUser?.uid,
+      data: { page: pageOptionValue },
     });
-    setShowChangePageModal(false);
+    props.embededPinCode();
   };
 
   const handelCancelClickChangePageModal = () => {
@@ -122,6 +213,20 @@ const DashboardContent = (props) => {
   const handelCancelClickEmbedInNotionModal = () => {
     setDisabledEmbedWidgetButton(false);
     setShowEmbedInNotionModal(false);
+  };
+
+  const handelChangeDatabaseClick = (e) => {
+    if (e.target.value) {
+      setDatabaseOptionValue(e.target.value);
+      setShowChangeDatabaseModal(true);
+    }
+  };
+
+  const handelChangePageOptionClick = (e) => {
+    if (e.target.value) {
+      setPageOptionValue(e.target.value);
+      setShowChangePageModal(true);
+    }
   };
 
   return (
@@ -178,7 +283,7 @@ const DashboardContent = (props) => {
                 <RefreshLink
                   icon={props.refreshIcon}
                   disabled
-                  inputValue="https://app.notion.coffee/w/espresso/asdadsadsasasd"
+                  inputValue={user?.uniqueUrl}
                 />
                 <Flex justify="flex-end">
                   <Button
@@ -258,29 +363,41 @@ const DashboardContent = (props) => {
                 </Text>
               </Box>
               <Box>
-                <Flex justify="flex-end">
-                  <Menu>
-                    <MenuButton
-                      as={Button}
-                      rightIcon={<ChevronDownIcon />}
-                      leftIcon={<Icon as={FaReact} color="orange.500" />}
-                      size="sm"
-                      fontSize="sm"
-                      fontWeight={500}
-                      textAlign="left"
-                      bg="white"
-                      borderWidth="1px"
-                    >
-                      Widget’s Page
-                    </MenuButton>
-                    <MenuList>
-                      <MenuItem>Loream Text 1</MenuItem>
-                      <MenuItem>Loream Text 2</MenuItem>
-                      <MenuItem>Loream Text 3</MenuItem>
-                      <MenuItem>Loream Text 4</MenuItem>
-                      <MenuItem>Loream Text 5</MenuItem>
-                    </MenuList>
-                  </Menu>
+                <Flex
+                  justify="flex-end"
+                  direction="column"
+                  alignItems="flex-end"
+                >
+                  <Select
+                    size="md"
+                    icon={<ChevronDownIcon />}
+                    fontSize="sm"
+                    fontWeight={500}
+                    textAlign="left"
+                    bg="white"
+                    borderWidth="1px"
+                    mt={2}
+                    maxWidth={{ sm: "100%", md: 200 }}
+                    placeholder="Select page"
+                    value={user?.page}
+                    errorBorderColor="red.400"
+                    onChange={handelChangePageOptionClick}
+                    isRequired
+                    isInvalid={showPageError}
+                  >
+                    {pages?.map((page) => {
+                      return (
+                        <option value={page.id} key={page.id}>
+                          {page.properties?.Name?.title[0]?.text.content}
+                        </option>
+                      );
+                    })}
+                  </Select>
+                  {showPageError && (
+                    <Text color="red.400" fontSize="sm" mt={2}>
+                      Please select a page where to embed the widget.
+                    </Text>
+                  )}
                 </Flex>
                 <Flex justify="flex-end">
                   <Button
@@ -349,28 +466,29 @@ const DashboardContent = (props) => {
               </Box>
               <Box>
                 <Flex justify="flex-end">
-                  <Menu>
-                    <MenuButton
-                      as={Button}
-                      rightIcon={<ChevronDownIcon />}
-                      leftIcon={<InfoOutlineIcon color="gray.500" />}
-                      size="sm"
-                      fontSize="sm"
-                      fontWeight={500}
-                      textAlign="left"
-                      bg="white"
-                      borderWidth="1px"
-                    >
-                      Task Database
-                    </MenuButton>
-                    <MenuList>
-                      <MenuItem>Loream Text 1</MenuItem>
-                      <MenuItem>Loream Text 2</MenuItem>
-                      <MenuItem>Loream Text 3</MenuItem>
-                      <MenuItem>Loream Text 4</MenuItem>
-                      <MenuItem>Loream Text 5</MenuItem>
-                    </MenuList>
-                  </Menu>
+                  <Select
+                    size="md"
+                    icon={<ChevronDownIcon />}
+                    fontSize="sm"
+                    fontWeight={500}
+                    textAlign="left"
+                    bg="white"
+                    borderWidth="1px"
+                    mt={2}
+                    maxWidth={{ sm: "100%", md: 200 }}
+                    placeholder="Select database"
+                    value={user?.database}
+                    onChange={handelChangeDatabaseClick}
+                    isRequired
+                  >
+                    {databases?.map((database) => {
+                      return (
+                        <option value={database.id} key={database.id}>
+                          {database.title[0].text.content}
+                        </option>
+                      );
+                    })}
+                  </Select>
                 </Flex>
               </Box>
             </SimpleGrid>

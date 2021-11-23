@@ -1,6 +1,7 @@
 import { all, fork, put, takeEvery, retry } from "redux-saga/effects";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "../../utils/init-firebase";
+import { createStandaloneToast } from "@chakra-ui/react";
 import { RETRY_INTERVAL, MAX_RETRY_COUNT } from "./constants";
 import {
   findDataBaseFailure,
@@ -10,7 +11,6 @@ import {
   generatePinCodeSuccess,
   generatePinCodeFailure,
   generateUniqueUrlSuccess,
-  generateUniqueUrl,
   generateUniqueUrlFailure,
   findPage,
   embededPinCodeSuccess,
@@ -25,6 +25,9 @@ import {
 } from "../types";
 
 import { generatePinCode, generateUrl } from "../../utils/helperFunctions";
+import { ModalToast } from "../../constants/Toast";
+
+const toast = createStandaloneToast();
 
 const getFindPageApi = async (payload) => {
   const listPages = httpsCallable(functions, "listpages");
@@ -78,7 +81,7 @@ function* getFindDataBase({ payload }) {
     );
     if (data) {
       yield put(findDataBaseSuccess(data.data));
-      yield put(findPage({ id: payload.id }));
+      yield put(findPage());
     }
   } catch (error) {
     yield put(findDataBaseFailure(error));
@@ -136,6 +139,11 @@ export function* callGenerateUniqueUrl() {
 }
 
 const getEmbededPinCodeApi = async (payload) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve({ status: 200, pinCodeBlock: "Token verified" });
+    }, 3000);
+  });
   // const findDataBase = httpsCallable(functions, "listdatabases");
   // const response = await findDataBase();
   // if (response) {
@@ -145,7 +153,6 @@ const getEmbededPinCodeApi = async (payload) => {
   //     return new Error("Database has no item");
   //   }
   // }
-  console.log("call to getEmbededPinCodeApi");
 };
 function* getEmbededPinCode({ payload }) {
   try {
@@ -156,9 +163,15 @@ function* getEmbededPinCode({ payload }) {
       payload
     );
     if (data) {
-      yield put(embededPinCodeSuccess(data.data));
+      yield put(embededPinCodeSuccess(data));
     }
   } catch (error) {
+    toast({
+      title: ModalToast.ChangePage.error.title,
+      description: ModalToast.ChangePage.error.description,
+      status: "error",
+      isClosable: true,
+    });
     yield put(embededPinCodeFailure(error));
   }
 }

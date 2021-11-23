@@ -1,8 +1,8 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import Espresso from "./Espresso";
 import { notionOAuthToken } from "../../../store/actions/NotionAuth";
-import { getProfile } from "../../../store/actions/Profile";
+import { getProfile, saveData } from "../../../store/actions/Profile";
 import {
   generatePinCode,
   generateUniqueUrl,
@@ -10,7 +10,7 @@ import {
   findPage,
   embededPinCode,
 } from "../../../store/actions/Dashboard";
-import { databases, pages } from "../../../constants/_data/Mockup";
+
 const EspressoContainer = (props) => {
   return <Espresso {...props} />;
 };
@@ -25,10 +25,8 @@ const mapStateToProps = ({ NotionAuth, Dashboard, Profile }) => {
     pinCodeGenerated: Dashboard?.pinCodeGenerated,
     dashboardError: Dashboard?.error,
     dashboardResponse: Dashboard?.response,
-   // databases: Dashboard?.databases,
-    databases: databases,
-    //pages: Dashboard?.pages,
-    pages: pages,
+    databases: Dashboard?.databases,
+    pages: Dashboard?.pages,
     user: Profile?.data,
   };
 };
@@ -52,6 +50,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     getProfile: (data) => {
       dispatch(getProfile(data));
+    },
+    saveData: (data) => {
+      dispatch(saveData(data));
     },
     embededPinCode: (data) => {
       dispatch(embededPinCode(data));
