@@ -72,7 +72,7 @@ const Profile = (props) => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (values) => {
+  const onSubmit = async (values) => {
     if (values) {
       if (values.name) {
         const isEqual = _.isEqual(values.name.trim(), initialValue.name);
@@ -89,8 +89,8 @@ const Profile = (props) => {
       if (values.email) {
         const isEqual = _.isEqual(values.email.trim(), initialValue.email);
         if (!isEqual) {
-          updateUserEmail(values.email);
-          sendUserEmailVerification();
+          await updateUserEmail(values.email);
+          await sendUserEmailVerification();
           logout();
           localStorage.removeItem(LocalStorage.TOKEN);
           localStorage.removeItem(LocalStorage.USER_ID);

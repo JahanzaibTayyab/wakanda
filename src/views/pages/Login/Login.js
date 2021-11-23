@@ -113,6 +113,13 @@ const Login = (props) => {
       setShowBanner(true);
       setEmail(localStorage.getItem(LocalStorage.WAKANDA_EMAIL));
     }
+    if (query.get("mode=verifyEmail")) {
+      toast({
+        position: "bottom-right",
+        title: Toast.EmailVerification.info.title,
+        isClosable: true,
+      });
+    }
     if (query.get("oauthToken")) {
       toast({
         position: "bottom-right",

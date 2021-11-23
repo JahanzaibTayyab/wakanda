@@ -26,6 +26,7 @@ const AuthContext = createContext({
   verifyToken: () => Promise(),
   updateUserEmail: () => Promise(),
   sendUserEmailVerification: () => Promise(),
+  resetPassword: () => Promise,
 });
 
 export const useAuth = () => useContext(AuthContext);
