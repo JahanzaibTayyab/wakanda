@@ -10,7 +10,7 @@ import {
   Box,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, Redirect } from "react-router-dom";
 import { Logo } from "../../components/controls/Logo";
 import Card from "../../components/controls/Card";
@@ -21,10 +21,41 @@ function useQuery() {
 }
 
 export default function ResetPasswordPage() {
-  const { resetPassword } = useAuth();
+  const { resetPassword, verifyPasswordResetCodeVerification } = useAuth();
   const query = useQuery();
   const [password, setPassword] = useState("");
+  const [disableForm, setDisableForm] = useState(true);
   const toast = useToast();
+
+  useEffect(() => {
+    toast({
+      position: "bottom-right",
+      title: "Verifying Code",
+      isClosable: true,
+    });
+    async function verifyToken() {
+      try {
+        await verifyPasswordResetCodeVerification(query.get("oobCode"));
+        toast({
+          position: "bottom-right",
+          title: "Token Verified",
+          description: "You can Change your password",
+          status: "success",
+          isClosable: true,
+        });
+        setDisableForm(false);
+      } catch (error) {
+        toast({
+          position: "bottom-right",
+          title: error?.message,
+          description: error?.status,
+          status: "error",
+          isClosable: true,
+        });
+      }
+    }
+    verifyToken();
+  }, []);
   return (
     <Box
       bg={useColorModeValue("gray.50", "inherit")}
@@ -53,6 +84,7 @@ export default function ResetPasswordPage() {
             try {
               await resetPassword(query.get("oobCode"), password);
               toast({
+                position: "bottom-right",
                 description: "Password has been changed, you can login now.",
                 status: "success",
                 duration: 9000,
@@ -61,6 +93,7 @@ export default function ResetPasswordPage() {
               <Redirect to={"/login"} />;
             } catch (error) {
               toast({
+                position: "bottom-right",
                 description: error.message,
                 status: "error",
                 duration: 9000,
@@ -76,6 +109,7 @@ export default function ResetPasswordPage() {
                 type="password"
                 autoComplete="password"
                 required
+                disabled={disableForm}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -86,6 +120,7 @@ export default function ResetPasswordPage() {
               textColor="white"
               size="lg"
               fontSize="md"
+              disabled={disableForm}
             >
               Reset password
             </Button>
