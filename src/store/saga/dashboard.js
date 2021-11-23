@@ -13,12 +13,15 @@ import {
   generateUniqueUrl,
   generateUniqueUrlFailure,
   findPage,
+  embededPinCodeSuccess,
+  embededPinCodeFailure,
 } from "../actions/Dashboard";
 import {
   FIND_DATABASE,
   FIND_PAGE,
   GENERATE_PIN_CODE,
   GENERATE_UNIQUE_URL,
+  EMBEDED_PIN_CODE,
 } from "../types";
 
 import { generatePinCode, generateUrl } from "../../utils/helperFunctions";
@@ -132,11 +135,44 @@ export function* callGenerateUniqueUrl() {
   yield takeEvery(GENERATE_UNIQUE_URL, getGenerateUniqueUrl);
 }
 
+const getEmbededPinCodeApi = async (payload) => {
+  // const findDataBase = httpsCallable(functions, "listdatabases");
+  // const response = await findDataBase();
+  // if (response) {
+  //   if (response.data.databases.length > 0) {
+  //     return response;
+  //   } else {
+  //     return new Error("Database has no item");
+  //   }
+  // }
+  console.log("call to getEmbededPinCodeApi");
+};
+function* getEmbededPinCode({ payload }) {
+  try {
+    const data = yield retry(
+      MAX_RETRY_COUNT,
+      RETRY_INTERVAL,
+      getEmbededPinCodeApi,
+      payload
+    );
+    if (data) {
+      yield put(embededPinCodeSuccess(data.data));
+    }
+  } catch (error) {
+    yield put(embededPinCodeFailure(error));
+  }
+}
+
+export function* callEmbededPinCode() {
+  yield takeEvery(EMBEDED_PIN_CODE, getEmbededPinCode);
+}
+
 export default function* rootSaga() {
   yield all([
     fork(callFindPage),
     fork(callFindDataBase),
     fork(callGeneratePinCode),
     fork(callGenerateUniqueUrl),
+    fork(callEmbededPinCode),
   ]);
 }
